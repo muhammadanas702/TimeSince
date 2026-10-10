@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Time Since</string>
-    <string name="widget_description">Live time since, or until, any date: years, months, days, hours, minutes and seconds.</string>
+    <string name="widget_description">Live time since, or until, any date. Choose the style, colors and transparency for each widget.</string>
 
     <string name="live">LIVE</string>
     <string name="title_since">Time since</string>
@@ -16,8 +16,8 @@
     <string name="unit_seconds">Seconds</string>
     <string name="unit_min_sec">Min : Sec</string>
 
-    <string name="help_title">Add it to your home screen</string>
-    <string name="help_steps">1. Long-press an empty spot on your home screen.\n2. Tap Widgets, then find Time Since.\n3. Drag it onto the screen and pick your date.</string>
+    <string name="help_title">Add a widget to your home screen</string>
+    <string name="help_steps">1. Tap the button above, or long-press an empty spot on your home screen and choose Widgets.\n2. Pick Time Since and place it.\n3. Choose the date, style, colors and transparency, then tap Save widget.\n4. Repeat for as many widgets as you like. Each one keeps its own date and look.</string>
     <string name="pin_widget">Add widget to home screen</string>
-    <string name="note">Android widgets cannot redraw every second. Years to hours refresh every hour, while minutes and seconds tick live.</string>
+    <string name="note">Android cannot redraw a widget every second. Days, hours and the rest refresh every hour, while minutes and seconds tick live. Tap a widget any time to change it.</string>
 </resources>

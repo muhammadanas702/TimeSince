@@ -21,286 +21,77 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tv_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="@string/title_since"
+            android:text="@string/app_name"
             android:textColor="@color/fg"
             android:textSize="28sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tv_sub"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text=""
+            android:text="Preview of your last saved look"
             android:textColor="@color/muted"
             android:textSize="14sp" />
 
-        <GridLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/board_bg"
-            android:clipToOutline="true"
-            android:columnCount="3"
-            android:padding="0.5dp"
-            android:rowCount="2">
+            android:layout_marginTop="16dp"
+            android:background="@drawable/preview_backdrop"
+            android:padding="14dp">
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_margin="0.5dp"
-                android:background="@color/surface"
-                android:orientation="vertical"
-                android:padding="14dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:letterSpacing="0.14"
-                    android:text="@string/unit_years"
-                    android:textAllCaps="true"
-                    android:textColor="@color/muted"
-                    android:textSize="11sp" />
-
-                <TextView
-                    android:id="@+id/v_years"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:fontFamily="monospace"
-                    android:text="00"
-                    android:textColor="@color/fg"
-                    android:textSize="40sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_margin="0.5dp"
-                android:background="@color/surface"
-                android:orientation="vertical"
-                android:padding="14dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:letterSpacing="0.14"
-                    android:text="@string/unit_months"
-                    android:textAllCaps="true"
-                    android:textColor="@color/muted"
-                    android:textSize="11sp" />
-
-                <TextView
-                    android:id="@+id/v_months"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:fontFamily="monospace"
-                    android:text="00"
-                    android:textColor="@color/fg"
-                    android:textSize="40sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_margin="0.5dp"
-                android:background="@color/surface"
-                android:orientation="vertical"
-                android:padding="14dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:letterSpacing="0.14"
-                    android:text="@string/unit_days"
-                    android:textAllCaps="true"
-                    android:textColor="@color/muted"
-                    android:textSize="11sp" />
-
-                <TextView
-                    android:id="@+id/v_days"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:fontFamily="monospace"
-                    android:text="00"
-                    android:textColor="@color/fg"
-                    android:textSize="40sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_margin="0.5dp"
-                android:background="@color/surface"
-                android:orientation="vertical"
-                android:padding="14dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:letterSpacing="0.14"
-                    android:text="@string/unit_hours"
-                    android:textAllCaps="true"
-                    android:textColor="@color/muted"
-                    android:textSize="11sp" />
-
-                <TextView
-                    android:id="@+id/v_hours"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:fontFamily="monospace"
-                    android:text="00"
-                    android:textColor="@color/fg"
-                    android:textSize="40sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_margin="0.5dp"
-                android:background="@color/surface"
-                android:orientation="vertical"
-                android:padding="14dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:letterSpacing="0.14"
-                    android:text="@string/unit_minutes"
-                    android:textAllCaps="true"
-                    android:textColor="@color/muted"
-                    android:textSize="11sp" />
-
-                <TextView
-                    android:id="@+id/v_minutes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:fontFamily="monospace"
-                    android:text="00"
-                    android:textColor="@color/fg"
-                    android:textSize="40sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_margin="0.5dp"
-                android:background="@color/surface"
-                android:orientation="vertical"
-                android:padding="14dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:letterSpacing="0.14"
-                    android:text="@string/unit_seconds"
-                    android:textAllCaps="true"
-                    android:textColor="@color/accent"
-                    android:textSize="11sp" />
-
-                <TextView
-                    android:id="@+id/v_seconds"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:fontFamily="monospace"
-                    android:text="00"
-                    android:textColor="@color/accent"
-                    android:textSize="40sp" />
-            </LinearLayout>
-        </GridLayout>
+            <FrameLayout
+                android:id="@+id/preview_host"
+                android:layout_width="match_parent"
+                android:layout_height="130dp" />
+        </FrameLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
             android:letterSpacing="0.16"
-            android:text="@string/settings"
+            android:text="Your widgets"
             android:textAllCaps="true"
             android:textColor="@color/muted"
             android:textSize="12sp" />
 
-        <EditText
-            android:id="@+id/et_label"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_field"
-            android:hint="@string/hint_label"
-            android:imeOptions="actionDone"
-            android:inputType="textCapSentences"
-            android:maxLength="40"
-            android:maxLines="1"
-            android:paddingHorizontal="14dp"
-            android:textColor="@color/fg"
-            android:textColorHint="@color/muted"
-            android:textSize="16sp" />
-
         <LinearLayout
+            android:id="@+id/list_widgets"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
+            android:orientation="vertical" />
 
-            <Button
-                android:id="@+id/btn_date"
-                android:layout_width="0dp"
-                android:layout_height="52dp"
-                android:layout_marginEnd="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_button_outline"
-                android:stateListAnimator="@null"
-                android:text="Date"
-                android:textAllCaps="false"
-                android:textColor="@color/fg"
-                android:textSize="15sp" />
-
-            <Button
-                android:id="@+id/btn_time"
-                android:layout_width="0dp"
-                android:layout_height="52dp"
-                android:layout_marginStart="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_button_outline"
-                android:stateListAnimator="@null"
-                android:text="Time"
-                android:textAllCaps="false"
-                android:textColor="@color/fg"
-                android:textSize="15sp" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/tv_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="No widgets yet. Add one below and it will show up here, so you can change its date, style and colors any time."
+            android:textColor="@color/muted"
+            android:textSize="14sp" />
 
         <Button
-            android:id="@+id/btn_save"
+            android:id="@+id/btn_pin"
             android:layout_width="match_parent"
             android:layout_height="52dp"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/bg_button_primary"
             android:stateListAnimator="@null"
-            android:text="Save"
+            android:text="@string/pin_widget"
             android:textAllCaps="false"
             android:textColor="@color/on_accent"
             android:textSize="16sp"
             android:textStyle="bold" />
 
         <LinearLayout
-            android:id="@+id/card_help"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="24dp"
             android:background="@drawable/bg_field"
             android:orientation="vertical"
             android:padding="16dp">
@@ -321,18 +112,6 @@
                 android:text="@string/help_steps"
                 android:textColor="@color/muted"
                 android:textSize="14sp" />
-
-            <Button
-                android:id="@+id/btn_pin"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="14dp"
-                android:background="@drawable/bg_button_outline"
-                android:stateListAnimator="@null"
-                android:text="@string/pin_widget"
-                android:textAllCaps="false"
-                android:textColor="@color/accent"
-                android:textSize="15sp" />
         </LinearLayout>
 
         <TextView

@@ -10,16 +10,22 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!-- Launcher screen and widget configuration screen in one. -->
+        <!-- Launcher screen: preview, list of widgets, add button. -->
         <activity
             android:name=".MainActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <!-- Settings for one widget. Opened by the system when a widget is added, and when one is tapped. -->
+        <activity
+            android:name=".ConfigActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>

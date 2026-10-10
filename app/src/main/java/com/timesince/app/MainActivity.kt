@@ -1,49 +1,41 @@
 package com.timesince.app
 
 import android.app.Activity
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.format.DateFormat
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
-import android.widget.EditText
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 /**
- * Two jobs in one screen:
- *  - opened from the launcher: a live preview, plus help for adding the widget;
- *  - opened for a widget (when it is added, or when it is tapped): choose that widget's date.
+ * Home screen of the app: a live preview, the list of widgets already on the home screen
+ * (tap one to change its date, style or colors), and a button to add another widget.
  */
 class MainActivity : Activity() {
 
-    private var widgetId = AppWidgetManager.INVALID_APPWIDGET_ID
-    private lateinit var date: LocalDate
-    private lateinit var time: LocalTime
+    private lateinit var previewHost: FrameLayout
+    private lateinit var list: LinearLayout
+    private lateinit var empty: TextView
 
-    private lateinit var etLabel: EditText
-    private lateinit var btnDate: Button
-    private lateinit var btnTime: Button
-    private lateinit var tvTitle: TextView
-    private lateinit var tvSub: TextView
-    private lateinit var cells: List<TextView>
+    private var previewView: View? = null
+    private var previewStyle = -1
 
     private val handler = Handler(Looper.getMainLooper())
     private val ticker = object : Runnable {
         override fun run() {
-            render()
-            handler.postDelayed(this, 1000L - (System.currentTimeMillis() % 1000L) + 5L)
+            refresh()
+            handler.postDelayed(this, 30_000L)
         }
     }
 
@@ -51,81 +43,20 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        widgetId = intent?.getIntExtra(
-            AppWidgetManager.EXTRA_APPWIDGET_ID,
-            AppWidgetManager.INVALID_APPWIDGET_ID
-        ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
-        val configuring = widgetId != AppWidgetManager.INVALID_APPWIDGET_ID
+        previewHost = findViewById(R.id.preview_host)
+        list = findViewById(R.id.list_widgets)
+        empty = findViewById(R.id.tv_empty)
 
-        // If the user backs out while adding a widget, the widget must not be placed.
-        if (configuring) {
-            setResult(RESULT_CANCELED, Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId))
-        }
-
-        etLabel = findViewById(R.id.et_label)
-        btnDate = findViewById(R.id.btn_date)
-        btnTime = findViewById(R.id.btn_time)
-        tvTitle = findViewById(R.id.tv_title)
-        tvSub = findViewById(R.id.tv_sub)
-        cells = listOf(
-            findViewById(R.id.v_years),
-            findViewById(R.id.v_months),
-            findViewById(R.id.v_days),
-            findViewById(R.id.v_hours),
-            findViewById(R.id.v_minutes),
-            findViewById(R.id.v_seconds)
-        )
-
-        val cfg = if (configuring) {
-            Store.forWidget(this, widgetId)
-        } else {
-            Store.read(this, Store.PREVIEW_ID) ?: Store.EXAMPLE
-        }
-        date = cfg.start.toLocalDate()
-        time = cfg.start.toLocalTime()
-        etLabel.setText(cfg.label)
-
-        btnDate.setOnClickListener {
-            DatePickerDialog(
-                this,
-                { _, y, m, d ->
-                    date = LocalDate.of(y, m + 1, d)
-                    render()
-                },
-                date.year, date.monthValue - 1, date.dayOfMonth
-            ).show()
-        }
-        btnTime.setOnClickListener {
-            TimePickerDialog(
-                this,
-                { _, h, m ->
-                    time = LocalTime.of(h, m)
-                    render()
-                },
-                time.hour, time.minute, DateFormat.is24HourFormat(this)
-            ).show()
-        }
-
-        findViewById<Button>(R.id.btn_save).apply {
-            text = if (configuring) "Save widget" else "Save as default"
-            setOnClickListener { save(configuring) }
-        }
-
-        val help = findViewById<View>(R.id.card_help)
         val pin = findViewById<Button>(R.id.btn_pin)
-        if (configuring) {
-            help.visibility = View.GONE
-        } else {
-            val manager = AppWidgetManager.getInstance(this)
-            if (manager.isRequestPinAppWidgetSupported) {
-                pin.setOnClickListener {
-                    manager.requestPinAppWidget(
-                        ComponentName(this, TimeSinceWidget::class.java), null, null
-                    )
-                }
-            } else {
-                pin.visibility = View.GONE
+        val manager = AppWidgetManager.getInstance(this)
+        if (manager.isRequestPinAppWidgetSupported) {
+            pin.setOnClickListener {
+                manager.requestPinAppWidget(
+                    ComponentName(this, TimeSinceWidget::class.java), null, null
+                )
             }
+        } else {
+            pin.visibility = View.GONE
         }
     }
 
@@ -139,43 +70,65 @@ class MainActivity : Activity() {
         super.onPause()
     }
 
-    private fun save(configuring: Boolean) {
-        val cfg = Config(etLabel.text.toString().trim().take(40), LocalDateTime.of(date, time))
-        Store.write(this, Store.PREVIEW_ID, cfg)
-        if (configuring) {
-            Store.write(this, widgetId, cfg)
-            TimeSinceWidget.updateAll(this)
-            setResult(RESULT_OK, Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId))
-            finish()
+    private fun refresh() {
+        renderPreview()
+        renderList()
+    }
+
+    /** Shows the most recently saved look, or the example date before anything has been saved. */
+    private fun renderPreview() {
+        val cfg = Store.read(this, Store.PREVIEW_ID) ?: Store.EXAMPLE
+        val (views, _) = TimeSinceWidget.build(this, Store.PREVIEW_ID, cfg, true)
+        val existing = previewView
+        if (existing == null || previewStyle != cfg.style) {
+            previewHost.removeAllViews()
+            val v = views.apply(this, previewHost)
+            previewHost.addView(v)
+            previewView = v
+            previewStyle = cfg.style
+            val lp = previewHost.layoutParams
+            lp.height = dp(Styles.previewHeightDp(cfg.style))
+            previewHost.layoutParams = lp
         } else {
-            Toast.makeText(this, "Saved. New widgets will start with this date.", Toast.LENGTH_SHORT).show()
+            views.reapply(this, existing)
         }
     }
 
-    private fun render() {
-        val start = LocalDateTime.of(date, time)
-        val p = TimeMath.compute(start, LocalDateTime.now())
+    private fun renderList() {
+        val manager = AppWidgetManager.getInstance(this)
+        val ids = manager.getAppWidgetIds(ComponentName(this, TimeSinceWidget::class.java))
+        list.removeAllViews()
+        empty.visibility = if (ids.isEmpty()) View.VISIBLE else View.GONE
 
-        val values = listOf(p.years, p.months, p.days, p.hours, p.minutes, p.seconds)
-        for (i in values.indices) {
-            val text = values[i].toString().padStart(2, '0')
-            if (cells[i].text.toString() != text) cells[i].text = text
+        val inflater = LayoutInflater.from(this)
+        val now = LocalDateTime.now()
+        for (id in ids) {
+            val cfg = Store.forWidget(this, id)
+            val p = TimeMath.compute(cfg.start, now)
+            val row = inflater.inflate(R.layout.item_widget, list, false)
+
+            row.findViewById<TextView>(R.id.it_title).text =
+                cfg.label.ifBlank { if (p.future) "Time until" else "Time since" }
+            row.findViewById<TextView>(R.id.it_sub).text =
+                TimeMath.daysLabel(p.totalDays) + (if (p.future) " to go · " else " · ") +
+                    DATE_FMT.format(cfg.start)
+
+            val dot = GradientDrawable()
+            dot.shape = GradientDrawable.OVAL
+            dot.setColor(cfg.accent)
+            row.findViewById<View>(R.id.it_dot).background = dot
+
+            row.setOnClickListener {
+                startActivity(
+                    Intent(this, ConfigActivity::class.java)
+                        .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id)
+                )
+            }
+            list.addView(row)
         }
-
-        val label = etLabel.text.toString().trim()
-        tvTitle.text = label.ifEmpty { if (p.future) "Time until" else "Time since" }
-
-        val clock = if (time != LocalTime.MIDNIGHT) " · " + TIME_FMT.format(time) else ""
-        tvSub.text = (if (p.future) "Counting down to " else "Counting up from ") +
-            LONG_DATE_FMT.format(date) + clock
-
-        btnDate.text = "Date: " + SHORT_DATE_FMT.format(date)
-        btnTime.text = "Time: " + TIME_FMT.format(time)
     }
 
     companion object {
-        private val LONG_DATE_FMT = DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy", Locale.ENGLISH)
-        private val SHORT_DATE_FMT = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.ENGLISH)
-        private val TIME_FMT = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH)
+        private val DATE_FMT = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.ENGLISH)
     }
 }

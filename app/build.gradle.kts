@@ -7,12 +7,24 @@ android {
     namespace = "com.timesince.app"
     compileSdk = 35
 
+    // A fixed debug key, so every build is signed the same way and a new APK installs
+    // over the old one without uninstalling. This key is public (it is in the repository),
+    // so use your own private key for anything you publish.
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     defaultConfig {
         applicationId = "com.timesince.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "2.0"
     }
 
     buildTypes {
