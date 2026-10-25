@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="World clock settings"
+            android:textColor="@color/fg"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Every change shows in the preview straight away."
+            android:textColor="@color/muted"
+            android:textSize="14sp" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/preview_backdrop"
+            android:padding="14dp">
+
+            <FrameLayout
+                android:id="@+id/preview_host"
+                android:layout_width="match_parent"
+                android:layout_height="150dp" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:letterSpacing="0.16"
+            android:text="Cities"
+            android:textAllCaps="true"
+            android:textColor="@color/muted"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btn_city1"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_button_outline"
+            android:gravity="start|center_vertical"
+            android:paddingHorizontal="16dp"
+            android:stateListAnimator="@null"
+            android:text="City 1"
+            android:textAllCaps="false"
+            android:textColor="@color/fg"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/btn_city2"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_button_outline"
+            android:gravity="start|center_vertical"
+            android:paddingHorizontal="16dp"
+            android:stateListAnimator="@null"
+            android:text="City 2"
+            android:textAllCaps="false"
+            android:textColor="@color/fg"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/btn_city3"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_button_outline"
+            android:gravity="start|center_vertical"
+            android:paddingHorizontal="16dp"
+            android:stateListAnimator="@null"
+            android:text="City 3"
+            android:textAllCaps="false"
+            android:textColor="@color/fg"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/btn_h24"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_button_outline"
+            android:stateListAnimator="@null"
+            android:text="24-hour clock: Off"
+            android:textAllCaps="false"
+            android:textColor="@color/fg"
+            android:textSize="15sp" />
+
+        <include
+            layout="@layout/view_look"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="28dp"
+            android:background="@drawable/bg_button_primary"
+            android:stateListAnimator="@null"
+            android:text="Save widget"
+            android:textAllCaps="false"
+            android:textColor="@color/on_accent"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</ScrollView>

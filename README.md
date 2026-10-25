@@ -15,6 +15,16 @@ An Android home-screen widget that shows how much time has passed since a date y
 - Pick a date in the future and it becomes a countdown.
 - Dark app, English text, no internet permission, no ads, no extra libraries.
 
+## More widgets (version 2.1)
+
+The app now adds three widgets to the launcher's widget list. Each one keeps its own settings, and tapping a widget reopens them.
+
+- **Time Since**: the widget described above.
+- **Clock and Date**: a big live clock with today's date. Choose 12 or 24 hour, show seconds, and pick the colors and transparency.
+- **World Clock**: two or three cities in one widget, each with its own live time and weekday. Pick the cities from a list of about 45 (or "Local time"), choose 12 or 24 hour, colors and transparency.
+
+The two clock widgets use `TextClock`, which the launcher keeps ticking by itself, so they need no alarms or background work.
+
 ## How the widget stays live
 
 Android does not let a widget redraw itself every second. The widget is split in two:
@@ -62,6 +72,12 @@ app/src/main/java/com/timesince/app/
   TimeSinceWidget.kt  draws the widget and schedules the hourly refresh
   ConfigActivity.kt   settings screen for one widget, with live preview
   MainActivity.kt     app home: preview, list of widgets, add button
+  Look.kt             colors and transparency shared by the clock widgets
+  LookPanel.kt        theme picker, color dialog and opacity slider for settings screens
+  Cities.kt           the city list and their time zones
+  ExtraStore.kt       saves the settings of the clock widgets, one set per widget
+  ClockWidget.kt, ClockConfigActivity.kt              Clock and Date widget and its settings
+  WorldClockWidget.kt, WorldClockConfigActivity.kt    World Clock widget and its settings
 app/src/main/res/
   layout/widget_time_since.xml   Detailed style
   layout/widget_days.xml         Total days style
