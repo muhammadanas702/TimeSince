@@ -15,6 +15,13 @@ data class EventsCfg(
     val events: List<EventItem> = emptyList()
 )
 
+/** [offset] is the month being shown, counted from the current month (0 = this month). */
+data class CalendarCfg(
+    val look: Look = Look(),
+    val mondayFirst: Boolean = true,
+    val offset: Int = 0
+)
+
 data class ClockCfg(
     val look: Look = Look(),
     val h24: Boolean = false,
@@ -91,6 +98,29 @@ object ExtraStore {
         e.putString("world_zones_$id", cfg.zones.joinToString(";") { it.name + "|" + it.id })
         e.putBoolean("world_h24_$id", cfg.h24)
         e.apply()
+    }
+
+    fun readCalendar(c: Context, id: Int): CalendarCfg {
+        val p = prefs(c)
+        return CalendarCfg(
+            look = readLook(p, "cal", id),
+            mondayFirst = p.getBoolean("cal_monday_$id", true),
+            offset = p.getInt("cal_offset_$id", 0)
+        )
+    }
+
+    /** Saves the settings. Saving also jumps back to the current month. */
+    fun writeCalendar(c: Context, id: Int, cfg: CalendarCfg) {
+        val e = prefs(c).edit()
+        writeLook(e, "cal", id, cfg.look)
+        e.putBoolean("cal_monday_$id", cfg.mondayFirst)
+        e.putInt("cal_offset_$id", 0)
+        e.apply()
+    }
+
+    /** The arrows on the widget change only this. */
+    fun setCalendarOffset(c: Context, id: Int, offset: Int) {
+        prefs(c).edit().putInt("cal_offset_$id", offset).apply()
     }
 
     fun readEvents(c: Context, id: Int): EventsCfg {

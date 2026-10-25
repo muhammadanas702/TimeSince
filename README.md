@@ -15,15 +15,17 @@ An Android home-screen widget that shows how much time has passed since a date y
 - Pick a date in the future and it becomes a countdown.
 - Dark app, English text, no internet permission, no ads, no extra libraries.
 
-## More widgets (version 2.1)
+## More widgets (version 2.2)
 
-The app now adds three widgets to the launcher's widget list. Each one keeps its own settings, and tapping a widget reopens them.
+The app now adds five widgets to the launcher's widget list. Each one keeps its own settings, and tapping a widget reopens them.
 
 - **Time Since**: the widget described above.
 - **Clock and Date**: a big live clock with today's date. Choose 12 or 24 hour, show seconds, and pick the colors and transparency.
 - **World Clock**: two or three cities in one widget, each with its own live time and weekday. Pick the cities from a list of about 45 (or "Local time"), choose 12 or 24 hour, colors and transparency.
 
 - **Event Countdown**: up to four named dates in one widget, each with the days left (`Today`, `Tomorrow`, `48 days`, or `3 days ago` once it has passed). Tick *Every year* for birthdays and anniversaries and the widget counts to the next one.
+
+- **Month Calendar**: the month at a glance with today circled in the accent color. The arrows on the widget move to the previous or next month, tapping the month name jumps back to this month, and tapping anywhere else opens the settings. Choose whether the week starts on Monday or Sunday.
 
 The clock widgets use `TextClock`, which the launcher keeps ticking by itself, so they need no alarms or background work. The Event Countdown only changes at midnight, so it uses one alarm shortly after midnight (and also redraws on boot and when the date or time zone changes).
 
@@ -82,6 +84,8 @@ app/src/main/java/com/timesince/app/
   WorldClockWidget.kt, WorldClockConfigActivity.kt    World Clock widget and its settings
   EventsWidget.kt, EventsConfigActivity.kt            Event Countdown widget and its settings
   EventMath.kt        days left, yearly repeat, ordering of events
+  CalendarWidget.kt, CalendarConfigActivity.kt        Month Calendar widget and its settings
+  CalendarMath.kt     the 6x7 month grid; CalendarIds.kt holds the generated view ids
   DailyTick.kt        the after-midnight alarm used by date-based widgets
 app/src/main/res/
   layout/widget_time_since.xml   Detailed style
