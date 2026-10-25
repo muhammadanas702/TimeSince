@@ -25,5 +25,7 @@
     <string name="widget_label_world">World Clock</string>
     <string name="widget_description_clock">A big live clock with today\'s date. Choose 12 or 24 hour, seconds, colors and transparency.</string>
     <string name="widget_description_world">Two or three cities, each with its own live time and weekday. Choose the cities, colors and transparency.</string>
+    <string name="widget_label_events">Event Countdown</string>
+    <string name="widget_description_events">Up to four events in one widget, each with the days left. Birthdays and anniversaries can repeat every year.</string>
     <string name="note">Android cannot redraw a widget every second. Days, hours and the rest refresh every hour, while minutes and seconds tick live. Tap a widget any time to change it.</string>
 </resources>

@@ -2,6 +2,18 @@ package com.timesince.app
 
 import android.content.Context
 import android.content.SharedPreferences
+import java.time.LocalDate
+
+data class EventItem(
+    val name: String,
+    val date: LocalDate,
+    val yearly: Boolean = false
+)
+
+data class EventsCfg(
+    val look: Look = Look(),
+    val events: List<EventItem> = emptyList()
+)
 
 data class ClockCfg(
     val look: Look = Look(),
@@ -79,6 +91,38 @@ object ExtraStore {
         e.putString("world_zones_$id", cfg.zones.joinToString(";") { it.name + "|" + it.id })
         e.putBoolean("world_h24_$id", cfg.h24)
         e.apply()
+    }
+
+    fun readEvents(c: Context, id: Int): EventsCfg {
+        val p = prefs(c)
+        val raw = p.getString("events_list_$id", null)
+        return EventsCfg(
+            look = readLook(p, "events", id),
+            events = if (raw.isNullOrEmpty()) emptyList() else parseEvents(raw)
+        )
+    }
+
+    fun writeEvents(c: Context, id: Int, cfg: EventsCfg) {
+        val e = prefs(c).edit()
+        writeLook(e, "events", id, cfg.look)
+        // Names must not contain the two separator characters.
+        val text = cfg.events.joinToString(";") {
+            val clean = it.name.replace('|', ' ').replace(';', ' ').replace('\n', ' ')
+            clean + "|" + it.date.toString() + "|" + (if (it.yearly) "1" else "0")
+        }
+        e.putString("events_list_$id", text)
+        e.apply()
+    }
+
+    private fun parseEvents(raw: String): List<EventItem> = raw.split(";").mapNotNull {
+        val parts = it.split("|")
+        if (parts.size != 3) return@mapNotNull null
+        val date = try {
+            LocalDate.parse(parts[1])
+        } catch (e: Exception) {
+            return@mapNotNull null
+        }
+        EventItem(parts[0], date, parts[2] == "1")
     }
 
     private fun parseZones(raw: String): List<Zone> = raw.split(";").mapNotNull {

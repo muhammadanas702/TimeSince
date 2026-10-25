@@ -23,7 +23,9 @@ The app now adds three widgets to the launcher's widget list. Each one keeps its
 - **Clock and Date**: a big live clock with today's date. Choose 12 or 24 hour, show seconds, and pick the colors and transparency.
 - **World Clock**: two or three cities in one widget, each with its own live time and weekday. Pick the cities from a list of about 45 (or "Local time"), choose 12 or 24 hour, colors and transparency.
 
-The two clock widgets use `TextClock`, which the launcher keeps ticking by itself, so they need no alarms or background work.
+- **Event Countdown**: up to four named dates in one widget, each with the days left (`Today`, `Tomorrow`, `48 days`, or `3 days ago` once it has passed). Tick *Every year* for birthdays and anniversaries and the widget counts to the next one.
+
+The clock widgets use `TextClock`, which the launcher keeps ticking by itself, so they need no alarms or background work. The Event Countdown only changes at midnight, so it uses one alarm shortly after midnight (and also redraws on boot and when the date or time zone changes).
 
 ## How the widget stays live
 
@@ -78,6 +80,9 @@ app/src/main/java/com/timesince/app/
   ExtraStore.kt       saves the settings of the clock widgets, one set per widget
   ClockWidget.kt, ClockConfigActivity.kt              Clock and Date widget and its settings
   WorldClockWidget.kt, WorldClockConfigActivity.kt    World Clock widget and its settings
+  EventsWidget.kt, EventsConfigActivity.kt            Event Countdown widget and its settings
+  EventMath.kt        days left, yearly repeat, ordering of events
+  DailyTick.kt        the after-midnight alarm used by date-based widgets
 app/src/main/res/
   layout/widget_time_since.xml   Detailed style
   layout/widget_days.xml         Total days style

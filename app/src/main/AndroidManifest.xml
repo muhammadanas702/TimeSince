@@ -92,5 +92,31 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/world_widget_info" />
         </receiver>
+
+        <!-- Event countdown widget and its settings screen. -->
+        <activity
+            android:name=".EventsConfigActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name=".EventsWidget"
+            android:exported="true"
+            android:label="@string/widget_label_events">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/events_widget_info" />
+        </receiver>
     </application>
 </manifest>
