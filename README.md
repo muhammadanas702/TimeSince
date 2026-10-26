@@ -44,7 +44,11 @@ If the phone is asleep when the hourly refresh is due, the refresh happens when 
 
 1. Put this folder in a GitHub repository (upload the files, or push).
 2. Open the repository's Actions tab. The `Build APK` workflow runs on every change (or press "Run workflow").
-3. When it finishes, open the run and download the `time-since-debug-apk` artifact. Unzip it to get `app-debug.apk`.
+3. When it finishes, the APK is published under **Releases**, named `TimeSince.apk`. This link always gives the newest build:
+   `https://github.com/<owner>/<repo>/releases/latest/download/TimeSince.apk`
+   (The run page also keeps the `time-since-debug-apk` artifact, a zip with `app-debug.apk`.)
+
+Each release is named after `versionName` in `app/build.gradle.kts` (for example `v2.3`). Pushing the same version again replaces that release, so its APK always matches the newest commit.
 
 ### Android Studio
 

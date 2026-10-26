@@ -5,6 +5,10 @@ on:
     branches: [main, master]
   workflow_dispatch:
 
+# "contents: write" lets the last step publish the APK as a GitHub release.
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,3 +31,23 @@ jobs:
         with:
           name: time-since-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+
+      # Publishes the APK under Releases, so there is a direct download link:
+      # https://github.com/<owner>/<repo>/releases/latest/download/TimeSince.apk
+      - name: Publish APK to GitHub Releases
+        if: github.ref_name == 'main' || github.ref_name == 'master'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(sed -n 's/.*versionName = "\(.*\)".*/\1/p' app/build.gradle.kts | head -n 1)
+          TAG="v$VERSION"
+          cp app/build/outputs/apk/debug/app-debug.apk TimeSince.apk
+          NOTES="Debug build of commit ${GITHUB_SHA::7}. Install it over the old app, no uninstall needed."
+          # The same version can be pushed more than once, so replace its release.
+          # That keeps the tag on the newest commit.
+          gh release delete "$TAG" --cleanup-tag --yes || true
+          gh release create "$TAG" TimeSince.apk \
+            --target "$GITHUB_SHA" \
+            --title "Time Since $VERSION" \
+            --notes "$NOTES" \
+            --latest
