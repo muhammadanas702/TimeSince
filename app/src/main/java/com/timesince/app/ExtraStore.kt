@@ -28,14 +28,15 @@ data class ClockCfg(
     val seconds: Boolean = false
 )
 
+/** [shortNames] shows LON and NEW instead of London and New York, as in the sample design. */
 data class WorldCfg(
-    val look: Look = Look(),
+    val look: Look = Looks.GLASS,
     val zones: List<Zone> = listOf(
-        Cities.byName("Lahore"),
         Cities.byName("London"),
         Cities.byName("New York")
     ),
-    val h24: Boolean = false
+    val h24: Boolean = false,
+    val shortNames: Boolean = true
 )
 
 /** Saves the settings of the clock-style widgets, one set per widget id. */
@@ -44,8 +45,7 @@ object ExtraStore {
 
     private fun prefs(c: Context) = c.getSharedPreferences(FILE, Context.MODE_PRIVATE)
 
-    private fun readLook(p: SharedPreferences, prefix: String, id: Int): Look {
-        val base = Look()
+    private fun readLook(p: SharedPreferences, prefix: String, id: Int, base: Look = Look()): Look {
         return Look(
             theme = p.getInt("${prefix}_theme_$id", base.theme),
             bg = p.getInt("${prefix}_bg_$id", base.bg),
@@ -85,18 +85,22 @@ object ExtraStore {
         val base = WorldCfg()
         val raw = p.getString("world_zones_$id", null)
         val saved = if (raw.isNullOrEmpty()) emptyList() else parseZones(raw)
+        // The look is stored under "world2": the redesigned widget starts from the Glass look,
+        // while the cities and the 12/24 hour choice of older widgets are kept.
         return WorldCfg(
-            look = readLook(p, "world", id),
+            look = readLook(p, "world2", id, base.look),
             zones = saved.ifEmpty { base.zones },
-            h24 = p.getBoolean("world_h24_$id", false)
+            h24 = p.getBoolean("world_h24_$id", false),
+            shortNames = p.getBoolean("world_short_$id", true)
         )
     }
 
     fun writeWorld(c: Context, id: Int, cfg: WorldCfg) {
         val e = prefs(c).edit()
-        writeLook(e, "world", id, cfg.look)
+        writeLook(e, "world2", id, cfg.look)
         e.putString("world_zones_$id", cfg.zones.joinToString(";") { it.name + "|" + it.id })
         e.putBoolean("world_h24_$id", cfg.h24)
+        e.putBoolean("world_short_$id", cfg.shortNames)
         e.apply()
     }
 

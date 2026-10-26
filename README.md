@@ -15,16 +15,14 @@ An Android home-screen widget that shows how much time has passed since a date y
 - Pick a date in the future and it becomes a countdown.
 - Dark app, English text, no internet permission, no ads, no extra libraries.
 
-## More widgets (version 2.2)
+## More widgets (version 2.3)
 
-The app now adds five widgets to the launcher's widget list. Each one keeps its own settings, and tapping a widget reopens them.
+The app adds five widgets to the launcher's widget list. The app's home screen has an **Add** button for each one and lists every widget you have placed, whatever its type. Each widget keeps its own settings, and tapping it (on the home screen or in the list) reopens them.
 
 - **Time Since**: the widget described above.
 - **Clock and Date**: a big live clock with today's date. Choose 12 or 24 hour, show seconds, and pick the colors and transparency.
-- **World Clock**: two or three cities in one widget, each with its own live time and weekday. Pick the cities from a list of about 45 (or "Local time"), choose 12 or 24 hour, colors and transparency.
-
+- **World Clock**: a frosted-glass widget. Your phone's own time sits in a bright pill, the date is underneath, and two or three city pills show each city's time (`LON  07:10 AM`). Tap a city to open a list with a **search box**: type a city or a country (for example `Seoul` or `South Korea`) from about 80 cities. Choose short names (`LON`) or full names (`London`), 12 or 24 hour, colors and transparency. The default *Glass* look is white at 25% with a yellow pill.
 - **Event Countdown**: up to four named dates in one widget, each with the days left (`Today`, `Tomorrow`, `48 days`, or `3 days ago` once it has passed). Tick *Every year* for birthdays and anniversaries and the widget counts to the next one.
-
 - **Month Calendar**: the month at a glance with today circled in the accent color. The arrows on the widget move to the previous or next month, tapping the month name jumps back to this month, and tapping anywhere else opens the settings. Choose whether the week starts on Monday or Sunday.
 
 The clock widgets use `TextClock`, which the launcher keeps ticking by itself, so they need no alarms or background work. The Event Countdown only changes at midnight, so it uses one alarm shortly after midnight (and also redraws on boot and when the date or time zone changes).
@@ -59,8 +57,8 @@ With JDK 17 and the Android SDK (platform 35) installed, run `./gradlew assemble
 ## Install on your phone
 
 1. Copy `app-debug.apk` to the phone and open it. Allow installs from that source if asked.
-2. Open **Time Since** and tap **Add widget to home screen**, or long-press the home screen, choose Widgets and drag Time Since out.
-3. Choose the date, style, colors and transparency, then tap **Save widget**.
+2. Open **Time Since** and tap **Add** next to the widget you want, or long-press the home screen, choose Widgets and drag one of the five out.
+3. Choose its settings, colors and transparency, then tap **Save widget**.
 
 ### Updating from version 1
 
@@ -78,7 +76,8 @@ app/src/main/java/com/timesince/app/
   MainActivity.kt     app home: preview, list of widgets, add button
   Look.kt             colors and transparency shared by the clock widgets
   LookPanel.kt        theme picker, color dialog and opacity slider for settings screens
-  Cities.kt           the city list and their time zones
+  Cities.kt           the city list (with countries) and their time zones
+  CityPicker.kt       the city list dialog with a search box
   ExtraStore.kt       saves the settings of the clock widgets, one set per widget
   ClockWidget.kt, ClockConfigActivity.kt              Clock and Date widget and its settings
   WorldClockWidget.kt, WorldClockConfigActivity.kt    World Clock widget and its settings

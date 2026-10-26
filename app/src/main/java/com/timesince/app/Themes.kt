@@ -18,7 +18,8 @@ object Styles {
 object Themes {
     const val CUSTOM = -1
 
-    class Preset(val name: String, val bg: Int, val fg: Int, val accent: Int)
+    /** [opacity] is optional: a preset that sets it (0 to 100) also moves the transparency slider. */
+    class Preset(val name: String, val bg: Int, val fg: Int, val accent: Int, val opacity: Int = -1)
 
     val PRESETS: List<Preset> = listOf(
         Preset("Midnight", 0xFF0A1120.toInt(), 0xFFE9EEF7.toInt(), 0xFFFF6A2B.toInt()),
@@ -31,6 +32,12 @@ object Themes {
         Preset("Violet", 0xFF1B1033.toInt(), 0xFFEFE9FF.toInt(), 0xFFA78BFA.toInt()),
         Preset("Mint", 0xFFE8F6EF.toInt(), 0xFF0F2A1D.toInt(), 0xFF0E9F6E.toInt())
     )
+
+    /** Frosted glass with a yellow clock pill: the look of the World Clock sample. */
+    val GLASS = Preset("Glass", 0xFFFFFFFF.toInt(), 0xFFFFFFFF.toInt(), 0xFFF5CC00.toInt(), 25)
+
+    /** The World Clock offers Glass first, then every ordinary preset. */
+    val GLASS_SET: List<Preset> = listOf(GLASS) + PRESETS
 }
 
 fun Context.dp(value: Int): Int = (value * resources.displayMetrics.density + 0.5f).toInt()

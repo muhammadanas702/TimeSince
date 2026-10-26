@@ -92,11 +92,31 @@
             android:textColor="@color/fg"
             android:textSize="15sp" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Tap a city to search by city or country, for example Seoul or South Korea. The big yellow clock always shows your phone's own time."
+            android:textColor="@color/muted"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btn_names"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_button_outline"
+            android:stateListAnimator="@null"
+            android:text="City names: Short (LON)"
+            android:textAllCaps="false"
+            android:textColor="@color/fg"
+            android:textSize="15sp" />
+
         <Button
             android:id="@+id/btn_h24"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:background="@drawable/bg_button_outline"
             android:stateListAnimator="@null"
             android:text="24-hour clock: Off"

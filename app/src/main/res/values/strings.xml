@@ -17,17 +17,17 @@
     <string name="unit_min_sec">Min : Sec</string>
 
     <string name="help_title">Add a widget to your home screen</string>
-    <string name="help_steps">1. Tap the button above, or long-press an empty spot on your home screen and choose Widgets.\n2. Pick Time Since and place it.\n3. Choose the date, style, colors and transparency, then tap Save widget.\n4. Repeat for as many widgets as you like. Each one keeps its own date and look.</string>
+    <string name="help_steps">1. Tap Add next to the widget you want, or long-press an empty spot on your home screen and choose Widgets.\n2. Place it. The five widgets are Time Since, Clock and Date, World Clock, Event Countdown and Month Calendar.\n3. Choose its settings, colors and transparency, then tap Save widget.\n4. Add as many as you like. Each one keeps its own settings, and tapping a widget on your home screen opens them again.</string>
     <string name="pin_widget">Add widget to home screen</string>
 
     <string name="widget_label_since">Time Since</string>
     <string name="widget_label_clock">Clock and Date</string>
     <string name="widget_label_world">World Clock</string>
     <string name="widget_description_clock">A big live clock with today\'s date. Choose 12 or 24 hour, seconds, colors and transparency.</string>
-    <string name="widget_description_world">Two or three cities, each with its own live time and weekday. Choose the cities, colors and transparency.</string>
+    <string name="widget_description_world">Frosted-glass clock: your phone's time in a bright pill, the date, and two or three cities. Search any city or country, and choose names, colors and transparency.</string>
     <string name="widget_label_events">Event Countdown</string>
     <string name="widget_description_events">Up to four events in one widget, each with the days left. Birthdays and anniversaries can repeat every year.</string>
     <string name="widget_label_calendar">Month Calendar</string>
     <string name="widget_description_calendar">A month at a glance with today circled. Use the arrows to look at other months. Choose the first day of the week, colors and transparency.</string>
-    <string name="note">Android cannot redraw a widget every second. Days, hours and the rest refresh every hour, while minutes and seconds tick live. Tap a widget any time to change it.</string>
+    <string name="note">About Time Since: Android cannot redraw a widget every second. Days, hours and the rest refresh every hour, while minutes and seconds tick live. Tap a widget any time to change it.</string>
 </resources>

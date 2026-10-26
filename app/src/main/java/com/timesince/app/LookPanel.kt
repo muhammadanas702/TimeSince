@@ -24,6 +24,7 @@ class LookPanel(
     private val activity: Activity,
     root: View,
     initial: Look,
+    private val presets: List<Themes.Preset> = Themes.PRESETS,
     private val onChange: () -> Unit
 ) {
     var look: Look = initial
@@ -76,8 +77,10 @@ class LookPanel(
     }
 
     private fun choosePreset(index: Int) {
-        val p = Themes.PRESETS[index]
+        val p = presets[index]
         look = look.copy(theme = index, bg = p.bg, fg = p.fg, accent = p.accent)
+        // A preset like Glass also brings its own transparency. Moving the slider redraws the preview.
+        if (p.opacity >= 0) seek.progress = p.opacity
         changed()
     }
 
@@ -101,7 +104,7 @@ class LookPanel(
 
     private fun buildPresets() {
         presetsRow.removeAllViews()
-        Themes.PRESETS.forEachIndexed { i, p ->
+        presets.forEachIndexed { i, p ->
             val selected = i == look.theme
 
             val item = LinearLayout(activity)

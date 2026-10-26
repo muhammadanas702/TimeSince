@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- World clock. Up to three rows, each with a city, the weekday there and the time there. -->
+<!-- World clock, frosted-glass design: the phone's own time in a colored pill, the date, then
+     two or three city pills (short name on the left, that city's time on the right). -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/w_root"
     android:layout_width="match_parent"
@@ -12,145 +13,216 @@
         android:importantForAccessibility="no"
         android:scaleType="fitXY"
         android:src="@drawable/widget_shape"
-        android:tint="@color/surface" />
+        android:tint="#40FFFFFF" />
+
+    <ImageView
+        android:id="@+id/w_border"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.5"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_border" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
         android:orientation="vertical"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="10dp">
+        android:padding="10dp">
 
-        <LinearLayout
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/p_bg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no"
+                android:scaleType="fitXY"
+                android:src="@drawable/pill_shape"
+                android:tint="#F5CC00" />
+
+            <TextClock
+                android:id="@+id/wc_time"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="sans-serif-medium"
+                android:format12Hour="hh : mm"
+                android:format24Hour="hh : mm"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="#111111"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <TextClock
+            android:id="@+id/wc_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:format12Hour="EEE, yyyy, MMM d,a"
+            android:format24Hour="EEE, yyyy, MMM d,a"
+            android:gravity="center"
+            android:maxLines="1"
+            android:paddingVertical="7dp"
+            android:textColor="#B3FFFFFF"
+            android:textSize="13.5sp" />
+
+        <FrameLayout
             android:id="@+id/r1_row"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="0dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="1">
 
-            <TextView
-                android:id="@+id/r1_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="Lahore"
-                android:textColor="@color/fg"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+            <ImageView
+                android:id="@+id/r1_bg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no"
+                android:scaleType="fitXY"
+                android:src="@drawable/pill_shape"
+                android:tint="#73000000" />
 
-            <TextClock
-                android:id="@+id/r1_day"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:format12Hour="EEE"
-                android:format24Hour="EEE"
-                android:paddingEnd="10dp"
-                android:textColor="@color/muted"
-                android:textSize="12sp"
-                android:timeZone="Asia/Karachi" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="21dp"
+                android:paddingEnd="30dp">
 
-            <TextClock
-                android:id="@+id/r1_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="monospace"
-                android:format12Hour="h:mm a"
-                android:format24Hour="h:mm a"
-                android:maxLines="1"
-                android:textColor="@color/accent"
-                android:textSize="22sp"
-                android:timeZone="Asia/Karachi" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/r1_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:text="LON"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp" />
 
-        <LinearLayout
+                <TextClock
+                    android:id="@+id/r1_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:format12Hour="hh:mm a"
+                    android:format24Hour="hh:mm a"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <FrameLayout
             android:id="@+id/r2_row"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="0dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="1">
 
-            <TextView
-                android:id="@+id/r2_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="London"
-                android:textColor="@color/fg"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+            <ImageView
+                android:id="@+id/r2_bg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no"
+                android:scaleType="fitXY"
+                android:src="@drawable/pill_shape"
+                android:tint="#73000000" />
 
-            <TextClock
-                android:id="@+id/r2_day"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:format12Hour="EEE"
-                android:format24Hour="EEE"
-                android:paddingEnd="10dp"
-                android:textColor="@color/muted"
-                android:textSize="12sp"
-                android:timeZone="Europe/London" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="21dp"
+                android:paddingEnd="30dp">
 
-            <TextClock
-                android:id="@+id/r2_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="monospace"
-                android:format12Hour="h:mm a"
-                android:format24Hour="h:mm a"
-                android:maxLines="1"
-                android:textColor="@color/accent"
-                android:textSize="22sp"
-                android:timeZone="Europe/London" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/r2_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:text="NEW"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp" />
 
-        <LinearLayout
+                <TextClock
+                    android:id="@+id/r2_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:format12Hour="hh:mm a"
+                    android:format24Hour="hh:mm a"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <FrameLayout
             android:id="@+id/r3_row"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="0dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="1"
+        android:visibility="gone">
 
-            <TextView
-                android:id="@+id/r3_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="New York"
-                android:textColor="@color/fg"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+            <ImageView
+                android:id="@+id/r3_bg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no"
+                android:scaleType="fitXY"
+                android:src="@drawable/pill_shape"
+                android:tint="#73000000" />
 
-            <TextClock
-                android:id="@+id/r3_day"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:format12Hour="EEE"
-                android:format24Hour="EEE"
-                android:paddingEnd="10dp"
-                android:textColor="@color/muted"
-                android:textSize="12sp"
-                android:timeZone="America/New_York" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="21dp"
+                android:paddingEnd="30dp">
 
-            <TextClock
-                android:id="@+id/r3_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="monospace"
-                android:format12Hour="h:mm a"
-                android:format24Hour="h:mm a"
-                android:maxLines="1"
-                android:textColor="@color/accent"
-                android:textSize="22sp"
-                android:timeZone="America/New_York" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/r3_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:text=""
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp" />
+
+                <TextClock
+                    android:id="@+id/r3_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:format12Hour="hh:mm a"
+                    android:format24Hour="hh:mm a"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
 </FrameLayout>

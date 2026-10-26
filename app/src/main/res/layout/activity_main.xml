@@ -75,18 +75,31 @@
             android:textColor="@color/muted"
             android:textSize="14sp" />
 
-        <Button
-            android:id="@+id/btn_pin"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:letterSpacing="0.16"
+            android:text="Add a widget"
+            android:textAllCaps="true"
+            android:textColor="@color/muted"
+            android:textSize="12sp" />
+
+        <LinearLayout
+            android:id="@+id/pin_list"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bg_button_primary"
-            android:stateListAnimator="@null"
-            android:text="@string/pin_widget"
-            android:textAllCaps="false"
-            android:textColor="@color/on_accent"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/tv_pin_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Your launcher cannot add widgets from here. Long-press an empty spot on the home screen, choose Widgets, and pick one from Time Since."
+            android:textColor="@color/muted"
+            android:textSize="14sp"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
