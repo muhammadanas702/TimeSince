@@ -24,7 +24,7 @@
     <string name="widget_label_clock">Clock and Date</string>
     <string name="widget_label_world">World Clock</string>
     <string name="widget_description_clock">A big live clock with today\'s date. Choose 12 or 24 hour, seconds, colors and transparency.</string>
-    <string name="widget_description_world">Frosted-glass clock: your phone's time in a bright pill, the date, and two or three cities. Search any city or country, and choose names, colors and transparency.</string>
+    <string name="widget_description_world">Frosted-glass clock: your phone\'s time in a bright pill, the date, and two or three cities. Search any city or country, and choose names, colors and transparency.</string>
     <string name="widget_label_events">Event Countdown</string>
     <string name="widget_description_events">Up to four events in one widget, each with the days left. Birthdays and anniversaries can repeat every year.</string>
     <string name="widget_label_calendar">Month Calendar</string>
