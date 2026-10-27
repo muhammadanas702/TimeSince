@@ -50,53 +50,30 @@
             android:textColor="@color/muted"
             android:textSize="12sp" />
 
-        <Button
-            android:id="@+id/btn_city1"
+        <LinearLayout
+            android:id="@+id/cities_container"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_button_outline"
-            android:gravity="start|center_vertical"
-            android:paddingHorizontal="16dp"
-            android:stateListAnimator="@null"
-            android:text="City 1"
-            android:textAllCaps="false"
-            android:textColor="@color/fg"
-            android:textSize="15sp" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
 
         <Button
-            android:id="@+id/btn_city2"
+            android:id="@+id/btn_add_city"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/bg_button_outline"
-            android:gravity="start|center_vertical"
-            android:paddingHorizontal="16dp"
             android:stateListAnimator="@null"
-            android:text="City 2"
+            android:text="+ Add a city"
             android:textAllCaps="false"
-            android:textColor="@color/fg"
-            android:textSize="15sp" />
-
-        <Button
-            android:id="@+id/btn_city3"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_button_outline"
-            android:gravity="start|center_vertical"
-            android:paddingHorizontal="16dp"
-            android:stateListAnimator="@null"
-            android:text="City 3"
-            android:textAllCaps="false"
-            android:textColor="@color/fg"
-            android:textSize="15sp" />
+            android:textColor="@color/accent"
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:text="Tap a city to search by city or country, for example Seoul or South Korea. The big yellow clock always shows your phone's own time."
+            android:text="Add as many cities as you like, from 1 to 6. Tap a city to search by city or country, for example Seoul or South Korea. The big yellow clock always shows your phone's own time. For more than 3 cities, make the widget taller on your home screen."
             android:textColor="@color/muted"
             android:textSize="12sp" />
 
@@ -128,6 +105,30 @@
             layout="@layout/view_look"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_pill"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Pill opacity: 75%"
+            android:textColor="@color/fg"
+            android:textSize="15sp" />
+
+        <SeekBar
+            android:id="@+id/sb_pill"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:max="100"
+            android:progress="75" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fades the yellow clock pill and the city pills. At 0% only the text shows."
+            android:textColor="@color/muted"
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/btn_save"

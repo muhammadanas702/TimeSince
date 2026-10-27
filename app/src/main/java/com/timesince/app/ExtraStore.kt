@@ -28,7 +28,11 @@ data class ClockCfg(
     val seconds: Boolean = false
 )
 
-/** [shortNames] shows LON and NEW instead of London and New York, as in the sample design. */
+/**
+ * [shortNames] shows LON and NEW instead of London and New York, as in the sample design.
+ * [pillOpacity] (0 to 100) fades the clock pill and the city pills; the look's own opacity fades the container.
+ * Any number of cities from 1 to [MAX_CITIES].
+ */
 data class WorldCfg(
     val look: Look = Looks.GLASS,
     val zones: List<Zone> = listOf(
@@ -36,14 +40,28 @@ data class WorldCfg(
         Cities.byName("New York")
     ),
     val h24: Boolean = false,
-    val shortNames: Boolean = true
-)
+    val shortNames: Boolean = true,
+    val pillOpacity: Int = 75
+) {
+    companion object {
+        const val MAX_CITIES = 6
+    }
+}
 
 /** Saves the settings of the clock-style widgets, one set per widget id. */
 object ExtraStore {
     private const val FILE = "time_since_extra"
 
     private fun prefs(c: Context) = c.getSharedPreferences(FILE, Context.MODE_PRIVATE)
+
+    /** The Glass look of version 2.3 (white at 25%). Kept only to recognise and upgrade it. */
+    private val OLD_GLASS = Look(
+        theme = 0,
+        bg = 0xFFFFFFFF.toInt(),
+        fg = 0xFFFFFFFF.toInt(),
+        accent = 0xFFF5CC00.toInt(),
+        opacity = 25
+    )
 
     private fun readLook(p: SharedPreferences, prefix: String, id: Int, base: Look = Look()): Look {
         return Look(
@@ -87,11 +105,15 @@ object ExtraStore {
         val saved = if (raw.isNullOrEmpty()) emptyList() else parseZones(raw)
         // The look is stored under "world2": the redesigned widget starts from the Glass look,
         // while the cities and the 12/24 hour choice of older widgets are kept.
+        var look = readLook(p, "world2", id, base.look)
+        // Widgets still on the first Glass look (25% white) move to the more transparent default.
+        if (look == OLD_GLASS) look = base.look
         return WorldCfg(
-            look = readLook(p, "world2", id, base.look),
-            zones = saved.ifEmpty { base.zones },
+            look = look,
+            zones = saved.ifEmpty { base.zones }.take(WorldCfg.MAX_CITIES),
             h24 = p.getBoolean("world_h24_$id", false),
-            shortNames = p.getBoolean("world_short_$id", true)
+            shortNames = p.getBoolean("world_short_$id", true),
+            pillOpacity = p.getInt("world_pill_$id", base.pillOpacity).coerceIn(0, 100)
         )
     }
 
@@ -101,6 +123,7 @@ object ExtraStore {
         e.putString("world_zones_$id", cfg.zones.joinToString(";") { it.name + "|" + it.id })
         e.putBoolean("world_h24_$id", cfg.h24)
         e.putBoolean("world_short_$id", cfg.shortNames)
+        e.putInt("world_pill_$id", cfg.pillOpacity)
         e.apply()
     }
 
