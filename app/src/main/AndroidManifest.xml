@@ -3,6 +3,10 @@
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <!-- In-app update: ask GitHub for the newest version, download it, and hand it to Android to install. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
     <!-- Event alerts: show a notification, and fire at the exact minute of the event. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission
@@ -99,6 +103,11 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/world_widget_info" />
         </receiver>
+
+        <!-- Receives Android's answer after an update was handed over for installing. -->
+        <receiver
+            android:name=".UpdateInstallReceiver"
+            android:exported="false" />
 
         <!-- Receives the alarm that announces an event. Only our own alarm reaches it. -->
         <receiver

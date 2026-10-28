@@ -13,7 +13,10 @@ import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.Toast
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -49,12 +52,12 @@ class MainActivity : Activity() {
         ) { id -> describeClock(id) },
         WidgetKind(
             "World Clock",
-            "Your time in a bright pill, plus two or three cities. Search any city or country.",
+            "Your time in a bright pill, plus 1 to 6 cities. Search any city or country.",
             WorldClockWidget::class.java, WorldClockConfigActivity::class.java
         ) { id -> describeWorld(id) },
         WidgetKind(
             "Event Countdown",
-            "Up to four events with the days left. Birthdays can repeat every year.",
+            "Up to four events with the days left. Birthdays can repeat, and an event can alert you.",
             EventsWidget::class.java, EventsConfigActivity::class.java
         ) { id -> describeEvents(id) },
         WidgetKind(
@@ -70,6 +73,16 @@ class MainActivity : Activity() {
 
     private var previewView: View? = null
     private var previewStyle = -1
+
+    // In-app update
+    private lateinit var updateCard: View
+    private lateinit var upSub: TextView
+    private lateinit var upProgress: ProgressBar
+    private lateinit var upButton: Button
+    private lateinit var btnCheck: Button
+    private lateinit var tvStatus: TextView
+    private var latest: Updater.Release? = null
+    private var checking = false
 
     private val handler = Handler(Looper.getMainLooper())
     private val ticker = object : Runnable {
@@ -88,6 +101,7 @@ class MainActivity : Activity() {
         empty = findViewById(R.id.tv_empty)
 
         buildAddButtons()
+        setupUpdates()
     }
 
     override fun onResume() {
@@ -125,6 +139,149 @@ class MainActivity : Activity() {
     private fun refresh() {
         renderPreview()
         renderList()
+    }
+
+    // ---- In-app update ------------------------------------------------------------------------
+
+    private fun updatePrefs() = getSharedPreferences("time_since_update", MODE_PRIVATE)
+
+    private fun setupUpdates() {
+        updateCard = findViewById(R.id.update_card)
+        upSub = findViewById(R.id.up_sub)
+        upProgress = findViewById(R.id.up_progress)
+        upButton = findViewById(R.id.up_button)
+        btnCheck = findViewById(R.id.btn_check_update)
+        tvStatus = findViewById(R.id.tv_update_status)
+
+        findViewById<TextView>(R.id.tv_version).text = "Version " + Updater.installedVersion(this)
+        upButton.setOnClickListener { startUpdate() }
+        btnCheck.setOnClickListener { checkForUpdates(true) }
+
+        // A release found earlier shows at once; then look again if the last look is over an hour old.
+        val prefs = updatePrefs()
+        val version = prefs.getString("ver", null)
+        val url = prefs.getString("url", null)
+        if (version != null && url != null) {
+            showRelease(Updater.Release(version, url, prefs.getLong("size", -1L)))
+        }
+        if (System.currentTimeMillis() - prefs.getLong("checked", 0L) > ONE_HOUR_MS) checkForUpdates(false)
+    }
+
+    /** Shows the update card when [release] is newer than the installed version, otherwise hides it. */
+    private fun showRelease(release: Updater.Release?) {
+        latest = release
+        val installed = Updater.installedVersion(this)
+        if (release == null || !Updater.isNewer(release.version, installed)) {
+            updateCard.visibility = View.GONE
+            return
+        }
+        val mb = if (release.size > 0) " (" + String.format(Locale.ENGLISH, "%.1f", release.size / 1048576.0) + " MB)" else ""
+        upSub.text = "Version " + release.version + " is ready" + mb + ". You have " + installed + ". Your widgets and settings stay."
+        updateCard.visibility = View.VISIBLE
+    }
+
+    private fun checkForUpdates(manual: Boolean) {
+        if (checking) return
+        checking = true
+        if (manual) {
+            btnCheck.isEnabled = false
+            tvStatus.text = "Checking..."
+        }
+        Thread {
+            var release: Updater.Release? = null
+            var failed = false
+            try {
+                release = Updater.fetchLatest()
+            } catch (e: Exception) {
+                failed = true
+            }
+            val found = release
+            val offline = failed
+            runOnUiThread {
+                checking = false
+                if (isDestroyed) return@runOnUiThread
+                btnCheck.isEnabled = true
+                if (offline) {
+                    if (manual) tvStatus.text = "Could not check for updates. Is the internet on?"
+                    return@runOnUiThread
+                }
+                val e = updatePrefs().edit().putLong("checked", System.currentTimeMillis())
+                if (found != null) {
+                    e.putString("ver", found.version).putString("url", found.apkUrl).putLong("size", found.size)
+                } else {
+                    e.remove("ver").remove("url").remove("size")
+                }
+                e.apply()
+                showRelease(found)
+                if (manual) {
+                    if (updateCard.visibility == View.VISIBLE) {
+                        tvStatus.text = "A new version is ready. Tap Update now at the top."
+                        findViewById<ScrollView>(R.id.main_scroll).smoothScrollTo(0, 0)
+                    } else {
+                        tvStatus.text = "You have the latest version."
+                    }
+                }
+            }
+        }.start()
+    }
+
+    private fun startUpdate() {
+        val release = latest ?: return
+        if (downloading) {
+            Toast.makeText(this, "Already downloading. Please wait.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (!Updater.canInstall(this)) {
+            Toast.makeText(
+                this,
+                "Allow Time Since to install updates, then come back and tap Update now.",
+                Toast.LENGTH_LONG
+            ).show()
+            startActivity(Updater.installPermissionIntent(this))
+            return
+        }
+
+        downloading = true
+        upButton.isEnabled = false
+        upButton.text = "Downloading..."
+        upProgress.isIndeterminate = true
+        upProgress.visibility = View.VISIBLE
+
+        val app = applicationContext
+        Thread {
+            var problem: String? = null
+            try {
+                Updater.downloadAndInstall(app, release) { percent ->
+                    runOnUiThread { if (!isDestroyed) showProgress(percent) }
+                }
+            } catch (e: Exception) {
+                problem = e.message ?: "unknown error"
+            }
+            val failure = problem
+            downloading = false
+            runOnUiThread {
+                if (isDestroyed) return@runOnUiThread
+                upButton.isEnabled = true
+                upProgress.visibility = View.GONE
+                if (failure == null) {
+                    upButton.text = "Update now"
+                    upSub.text = "Downloaded. Confirm Android's question to finish installing."
+                } else {
+                    upButton.text = "Try again"
+                    upSub.text = "The download did not work (" + failure + "). Check the internet and try again."
+                }
+            }
+        }.start()
+    }
+
+    private fun showProgress(percent: Int) {
+        if (percent < 0) {
+            upProgress.isIndeterminate = true
+            return
+        }
+        upProgress.isIndeterminate = false
+        upProgress.progress = percent
+        upButton.text = "Downloading... $percent%"
     }
 
     /** Shows the most recently saved Time Since look, or the example date before anything has been saved. */
@@ -226,5 +383,10 @@ class MainActivity : Activity() {
 
     companion object {
         private val DATE_FMT = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.ENGLISH)
+        private const val ONE_HOUR_MS = 60L * 60L * 1000L
+
+        /** True while an update is being downloaded, also after the screen was turned and recreated. */
+        @Volatile
+        private var downloading = false
     }
 }
