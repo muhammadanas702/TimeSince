@@ -12,7 +12,9 @@ data class Config(
     val bg: Int = Themes.PRESETS[0].bg,
     val fg: Int = Themes.PRESETS[0].fg,
     val accent: Int = Themes.PRESETS[0].accent,
-    val opacity: Int = 100
+    val opacity: Int = 100,
+    /** For a date in the future: 0 = no alert, 1 = notification, 2 = notification with the ringtone. */
+    val alert: Int = 0
 )
 
 /** Saves one Config per widget. Id 0 holds the last look used, as the starting point for new widgets. */
@@ -37,7 +39,8 @@ object Store {
                 bg = p.getInt("bg_$id", base.bg),
                 fg = p.getInt("fg_$id", base.fg),
                 accent = p.getInt("accent_$id", base.accent),
-                opacity = p.getInt("opacity_$id", 100).coerceIn(0, 100)
+                opacity = p.getInt("opacity_$id", 100).coerceIn(0, 100),
+                alert = p.getInt("alert_$id", 0).coerceIn(0, 2)
             )
         } catch (e: Exception) {
             null
@@ -54,6 +57,7 @@ object Store {
             .putInt("fg_$id", cfg.fg)
             .putInt("accent_$id", cfg.accent)
             .putInt("opacity_$id", cfg.opacity)
+            .putInt("alert_$id", cfg.alert)
             .apply()
     }
 
@@ -67,10 +71,11 @@ object Store {
             .remove("fg_$id")
             .remove("accent_$id")
             .remove("opacity_$id")
+            .remove("alert_$id")
             .apply()
     }
 
     /** A widget that has never been configured starts from the last look used, without its name. */
     fun forWidget(c: Context, id: Int): Config =
-        read(c, id) ?: read(c, PREVIEW_ID)?.copy(label = "") ?: EXAMPLE
+        read(c, id) ?: read(c, PREVIEW_ID)?.copy(label = "", alert = 0) ?: EXAMPLE
 }

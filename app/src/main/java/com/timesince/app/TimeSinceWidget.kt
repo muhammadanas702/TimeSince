@@ -44,7 +44,12 @@ class TimeSinceWidget : AppWidgetProvider() {
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
-        appWidgetIds.forEach { Store.remove(context, it) }
+        appWidgetIds.forEach {
+            Store.remove(context, it)
+            ExtraStore.remove(context, it)
+        }
+        // The alert of a removed widget stops with it.
+        EventAlerts.process(context)
     }
 
     override fun onDisabled(context: Context) {

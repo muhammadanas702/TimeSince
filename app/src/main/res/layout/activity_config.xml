@@ -99,6 +99,26 @@
                 android:textSize="15sp" />
         </LinearLayout>
 
+        <Button
+            android:id="@+id/btn_since_alert"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_button_outline"
+            android:stateListAnimator="@null"
+            android:text="Alert when the date arrives: Off"
+            android:textAllCaps="false"
+            android:textColor="@color/fg"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="For a date in the future. When the countdown reaches it you get a notification, or your phone rings (up to one minute, until you tap or swipe it away). On some phones you must also allow the app to run in the background."
+            android:textColor="@color/muted"
+            android:textSize="12sp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

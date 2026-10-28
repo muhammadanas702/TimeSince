@@ -12,10 +12,10 @@ An Android home-screen widget that shows how much time has passed since a date y
 - **Transparency**: a 0 to 100% slider for the widget background. At 0% only the text floats over your wallpaper.
 - **Multiple widgets**: add as many as you like. Each has its own name, date, style, colors and transparency. The app home screen lists them, and tapping a widget (or its row) opens its settings.
 - **Live preview** in the editor, drawn by the same code as the widget, so what you see is what you get.
-- Pick a date in the future and it becomes a countdown.
+- Pick a date in the future and it becomes a countdown. Set **Alert when the date arrives** to *Notification* or *Ringtone* and the app tells you the moment the countdown reaches zero (same alert system as the Event Countdown, see below).
 - Dark app, English text, no ads, no extra libraries. The internet permission is used for one thing only: looking for a newer version of the app on GitHub (see *Updating inside the app*).
 
-## More widgets (version 2.8)
+## More widgets (version 2.9)
 
 The app adds five widgets to the launcher's widget list. The app's home screen has an **Add** button for each one and lists every widget you have placed, whatever its type. Each widget keeps its own settings, and tapping it (on the home screen or in the list) reopens them.
 

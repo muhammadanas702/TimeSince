@@ -48,10 +48,12 @@ class ConfigActivity : Activity() {
     private var fg = 0
     private var accent = 0
     private var opacity = 100
+    private var alert = EventAlerts.MODE_OFF
 
     private lateinit var etLabel: EditText
     private lateinit var btnDate: Button
     private lateinit var btnTime: Button
+    private lateinit var btnAlert: Button
     private lateinit var btnBg: Button
     private lateinit var btnFg: Button
     private lateinit var btnAccent: Button
@@ -91,6 +93,7 @@ class ConfigActivity : Activity() {
         etLabel = findViewById(R.id.et_label)
         btnDate = findViewById(R.id.btn_date)
         btnTime = findViewById(R.id.btn_time)
+        btnAlert = findViewById(R.id.btn_since_alert)
         btnBg = findViewById(R.id.btn_c_bg)
         btnFg = findViewById(R.id.btn_c_fg)
         btnAccent = findViewById(R.id.btn_c_accent)
@@ -113,6 +116,7 @@ class ConfigActivity : Activity() {
         fg = cfg.fg
         accent = cfg.accent
         opacity = cfg.opacity
+        alert = cfg.alert
         etLabel.setText(cfg.label)
         seek.progress = opacity
 
@@ -143,6 +147,13 @@ class ConfigActivity : Activity() {
                 },
                 time.hour, time.minute, DateFormat.is24HourFormat(this)
             ).show()
+        }
+
+        btnAlert.setOnClickListener {
+            // Off, then Notification, then Ringtone, then Off again.
+            alert = (alert + 1) % 3
+            if (alert != EventAlerts.MODE_OFF) EventAlerts.askNotificationPermission(this)
+            changed()
         }
 
         styleButtons.forEachIndexed { i, button ->
@@ -222,13 +233,17 @@ class ConfigActivity : Activity() {
         bg = bg,
         fg = fg,
         accent = accent,
-        opacity = opacity
+        opacity = opacity,
+        alert = alert
     )
 
     private fun save() {
         val cfg = currentConfig()
         Store.write(this, widgetId, cfg)
         Store.write(this, Store.PREVIEW_ID, cfg)
+        // Alerts count from now on, so a date that is already past does not alert at once.
+        ExtraStore.setAlertCursor(this, widgetId, System.currentTimeMillis())
+        EventAlerts.process(this)
         TimeSinceWidget.updateAll(this)
         setResult(RESULT_OK, Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId))
         finish()
@@ -255,6 +270,11 @@ class ConfigActivity : Activity() {
     private fun refreshUi() {
         btnDate.text = "Date: " + SHORT_DATE_FMT.format(date)
         btnTime.text = "Time: " + TIME_FMT.format(time)
+
+        val alertOn = alert != EventAlerts.MODE_OFF
+        btnAlert.text = "Alert when the date arrives: " + EventAlerts.modeLabel(alert)
+        btnAlert.setBackgroundResource(if (alertOn) R.drawable.bg_button_primary else R.drawable.bg_button_outline)
+        btnAlert.setTextColor(getColor(if (alertOn) R.color.on_accent else R.color.fg))
 
         styleButtons.forEachIndexed { i, button ->
             val on = i == style

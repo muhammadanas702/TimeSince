@@ -1,5 +1,7 @@
 package com.timesince.app
 
+import android.Manifest
+import android.app.Activity
 import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationChannel
@@ -9,14 +11,16 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.os.Build
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 /**
- * Alerts for the Event Countdown widget: when an event's date arrives, a notification, or a
- * notification that rings with the phone's ringtone.
+ * Alerts for the Event Countdown widget (when an event's date or time arrives) and for Time Since widgets
+ * that count down to a future date: a notification, or a notification that rings with the phone's ringtone.
  *
  * One alarm is kept for the next alert (or the next change of the widget text) of all widgets. When it
  * fires, [process] sends what is due and sets the alarm for the one after. [process] is also called whenever a widget updates, after a
@@ -68,7 +72,32 @@ object EventAlerts {
             ExtraStore.setAlertCursor(context, id, now)
         }
 
+        // Time Since widgets that count down to a date in the future can alert when it arrives.
+        val sinceIds = manager.getAppWidgetIds(ComponentName(context, TimeSinceWidget::class.java))
+        for (id in sinceIds) {
+            val cfg = Store.read(context, id) ?: continue
+            if (cfg.alert == MODE_OFF) continue
+            val cursor = ExtraStore.alertCursor(context, id, now)
+            val moment = cfg.start.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            if (moment > cursor && moment <= now && now - moment <= LATE_LIMIT_MS) {
+                post(context, cfg.label.ifBlank { "Time Since" }, cfg.alert, "Your countdown is over.")
+            }
+            if (moment > now && moment < next) next = moment
+            ExtraStore.setAlertCursor(context, id, now)
+        }
+
         schedule(context, if (next == Long.MAX_VALUE) null else next)
+    }
+
+    /** Android 13 and newer ask before an app may show notifications. */
+    fun notificationsAllowed(context: Context): Boolean =
+        Build.VERSION.SDK_INT < 33 ||
+            context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+
+    fun askNotificationPermission(activity: Activity) {
+        if (!notificationsAllowed(activity)) {
+            activity.requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+        }
     }
 
     /** Shows one alert right now. The settings screen uses it for the test button. */
