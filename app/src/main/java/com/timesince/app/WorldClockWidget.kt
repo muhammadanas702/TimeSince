@@ -5,8 +5,6 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
-import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
@@ -24,6 +22,14 @@ private val WORLD_ROWS = listOf(
 )
 
 /**
+ * Text sizes in sp by number of cities (1 to 6). Two cities match the reference widget: clock 24, date 17.5,
+ * city text 14. More cities share the same height, so the text gets a little smaller.
+ */
+private val WORLD_CLOCK_SP = floatArrayOf(24f, 24f, 22f, 20f, 19f, 18f)
+private val WORLD_DATE_SP = floatArrayOf(17.5f, 17.5f, 16f, 15f, 14.5f, 14f)
+private val WORLD_ROW_SP = floatArrayOf(14f, 14f, 13.5f, 13f, 12f, 11.5f)
+
+/**
  * World clock in a frosted-glass design: the phone's own time in a colored pill, the date, and one to
  * six city pills. Every time is a TextClock, so the launcher keeps them ticking by itself.
  */
@@ -35,19 +41,6 @@ class WorldClockWidget : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         updateAll(context)
-    }
-
-    /** Resizing the widget changes how much room each row has, so the text sizes are worked out again. */
-    override fun onAppWidgetOptionsChanged(
-        context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetId: Int,
-        newOptions: Bundle
-    ) {
-        appWidgetManager.updateAppWidget(
-            appWidgetId,
-            build(context, appWidgetId, ExtraStore.readWorld(context, appWidgetId), false)
-        )
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -69,30 +62,12 @@ class WorldClockWidget : AppWidgetProvider() {
             }
         }
 
-        /** The height the launcher gives this widget right now, in dp. */
-        private fun widgetHeightDp(context: Context, id: Int): Float {
-            val options = AppWidgetManager.getInstance(context).getAppWidgetOptions(id)
-            val landscape =
-                context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-            val key = if (landscape) {
-                AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT
-            } else {
-                AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT
-            }
-            val h = options.getInt(key, 0)
-            return if (h > 0) h.toFloat() else 138f
-        }
-
-        /**
-         * Also used by the settings screen with preview = true, which passes the height of its
-         * preview box as [heightDp]. The widget asks the launcher for its own height.
-         */
+        /** Also used by the settings screen with preview = true. */
         fun build(
             context: Context,
             id: Int,
             cfg: WorldCfg,
-            preview: Boolean,
-            heightDp: Int = 0
+            preview: Boolean
         ): RemoteViews {
             val views = RemoteViews(context.packageName, R.layout.widget_world)
             val look = cfg.look
@@ -102,29 +77,35 @@ class WorldClockWidget : AppWidgetProvider() {
             LookUtil.applyBackground(views, look)
             views.setInt(R.id.w_border, "setColorFilter", look.fg or opaque)
 
-            // The text shrinks when many cities share a small widget, and grows back when it is resized.
+            // Text sizes come from the number of cities and the user's Text size choice. They do not
+            // depend on the size the launcher reports, because launchers report it differently.
             val count = cfg.zones.size.coerceIn(1, WorldCfg.MAX_CITIES)
-            val height = if (heightDp > 0) heightDp.toFloat() else widgetHeightDp(context, id)
-            val rowHeight = (height - 20f - 30f - 4f * count) / (count + 1)
-            val rowText = (rowHeight * 0.49f).coerceIn(8f, 13.5f)
-            val clockText = (rowHeight * 0.68f).coerceIn(10f, 18f)
+            val scale = cfg.textScale.coerceIn(70, 130) / 100f
+            val rowText = WORLD_ROW_SP[count - 1] * scale
+            val clockText = WORLD_CLOCK_SP[count - 1] * scale
+            val dateText = WORLD_DATE_SP[count - 1] * scale
 
             // The phone's own time in the colored pill. A TextClock picks 12 or 24 hour from the
             // phone's setting, so both formats get the same pattern and the widget's choice wins.
+            // The colored pill is solid, like the reference; the slider only changes the city pills.
             val pill = cfg.pillOpacity.coerceIn(0, 100)
             views.setInt(R.id.p_bg, "setColorFilter", look.accent or opaque)
-            views.setInt(R.id.p_bg, "setImageAlpha", 255 * pill / 100)
+            views.setInt(R.id.p_bg, "setImageAlpha", 255)
             val clock = if (cfg.h24) "HH : mm" else "hh : mm"
             views.setCharSequence(R.id.wc_time, "setFormat12Hour", clock)
             views.setCharSequence(R.id.wc_time, "setFormat24Hour", clock)
-            views.setTextColor(R.id.wc_time, LookUtil.onColor(look.accent))
+            views.setTextColor(
+                R.id.wc_time,
+                if (LookUtil.isLight(look.accent)) 0xFF000000.toInt() else 0xFFFFFFFF.toInt()
+            )
             views.setTextViewTextSize(R.id.wc_time, TypedValue.COMPLEX_UNIT_SP, clockText)
 
             // Date line, written like the sample: Mon, 2026, Oct 26,PM
             val date = if (cfg.h24) "EEE, yyyy, MMM d" else "EEE, yyyy, MMM d,a"
             views.setCharSequence(R.id.wc_date, "setFormat12Hour", date)
             views.setCharSequence(R.id.wc_date, "setFormat24Hour", date)
-            views.setTextColor(R.id.wc_date, LookUtil.muted(look.fg))
+            views.setTextColor(R.id.wc_date, (look.fg and 0x00FFFFFF) or (0x9E shl 24))
+            views.setTextViewTextSize(R.id.wc_date, TypedValue.COMPLEX_UNIT_SP, dateText)
 
             // City pills: dark on bright text colors, bright on dark ones.
             val light = LookUtil.isLight(look.fg)

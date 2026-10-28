@@ -34,7 +34,7 @@ object Themes {
     )
 
     /** Frosted glass with a yellow clock pill: the look of the World Clock sample. */
-    val GLASS = Preset("Glass", 0xFFFFFFFF.toInt(), 0xFFFFFFFF.toInt(), 0xFFF5CC00.toInt(), 12)
+    val GLASS = Preset("Glass", 0xFFFFFFFF.toInt(), 0xFFFFFFFF.toInt(), 0xFFF5CA01.toInt(), 15)
 
     /** The World Clock offers Glass first, then every ordinary preset. */
     val GLASS_SET: List<Preset> = listOf(GLASS) + PRESETS

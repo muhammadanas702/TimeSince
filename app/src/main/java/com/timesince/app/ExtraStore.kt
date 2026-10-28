@@ -34,7 +34,8 @@ data class ClockCfg(
 
 /**
  * [shortNames] shows LON and NEW instead of London and New York, as in the sample design.
- * [pillOpacity] (0 to 100) fades the clock pill and the city pills; the look's own opacity fades the container.
+ * [pillOpacity] (0 to 100) sets how strong the dark city pills are; the colored clock pill is always solid.
+ * The look's own opacity fades the container. [textScale] (70 to 130 percent) makes all text smaller or larger.
  * Any number of cities from 1 to [MAX_CITIES].
  */
 data class WorldCfg(
@@ -45,7 +46,8 @@ data class WorldCfg(
     ),
     val h24: Boolean = false,
     val shortNames: Boolean = true,
-    val pillOpacity: Int = 75
+    val pillOpacity: Int = 75,
+    val textScale: Int = 100
 ) {
     companion object {
         const val MAX_CITIES = 6
@@ -65,6 +67,15 @@ object ExtraStore {
         fg = 0xFFFFFFFF.toInt(),
         accent = 0xFFF5CC00.toInt(),
         opacity = 25
+    )
+
+    /** The Glass look of versions 2.4 and 2.5 (white at 12%, accent F5CC00). Upgraded to the reference look. */
+    private val OLD_GLASS_V24 = Look(
+        theme = 0,
+        bg = 0xFFFFFFFF.toInt(),
+        fg = 0xFFFFFFFF.toInt(),
+        accent = 0xFFF5CC00.toInt(),
+        opacity = 12
     )
 
     private fun readLook(p: SharedPreferences, prefix: String, id: Int, base: Look = Look()): Look {
@@ -111,13 +122,14 @@ object ExtraStore {
         // while the cities and the 12/24 hour choice of older widgets are kept.
         var look = readLook(p, "world2", id, base.look)
         // Widgets still on the first Glass look (25% white) move to the more transparent default.
-        if (look == OLD_GLASS) look = base.look
+        if (look == OLD_GLASS || look == OLD_GLASS_V24) look = base.look
         return WorldCfg(
             look = look,
             zones = saved.ifEmpty { base.zones }.take(WorldCfg.MAX_CITIES),
             h24 = p.getBoolean("world_h24_$id", false),
             shortNames = p.getBoolean("world_short_$id", true),
-            pillOpacity = p.getInt("world_pill_$id", base.pillOpacity).coerceIn(0, 100)
+            pillOpacity = p.getInt("world_pill_$id", base.pillOpacity).coerceIn(0, 100),
+            textScale = p.getInt("world_text_$id", base.textScale).coerceIn(70, 130)
         )
     }
 
@@ -128,6 +140,7 @@ object ExtraStore {
         e.putBoolean("world_h24_$id", cfg.h24)
         e.putBoolean("world_short_$id", cfg.shortNames)
         e.putInt("world_pill_$id", cfg.pillOpacity)
+        e.putInt("world_text_$id", cfg.textScale)
         e.apply()
     }
 

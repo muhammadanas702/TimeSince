@@ -13,8 +13,7 @@
         android:layout_height="match_parent"
         android:importantForAccessibility="no"
         android:scaleType="fitXY"
-        android:src="@drawable/widget_shape"
-        android:tint="#40FFFFFF" />
+        android:src="@drawable/world_shape" />
 
     <ImageView
         android:id="@+id/w_border"
@@ -23,13 +22,13 @@
         android:alpha="0.5"
         android:importantForAccessibility="no"
         android:scaleType="fitXY"
-        android:src="@drawable/widget_border" />
+        android:src="@drawable/world_border" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="11dp">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -42,8 +41,7 @@
                 android:layout_height="match_parent"
                 android:importantForAccessibility="no"
                 android:scaleType="fitXY"
-                android:src="@drawable/pill_shape"
-                android:tint="#F5CC00" />
+                android:src="@drawable/pill_shape" />
 
             <TextClock
                 android:id="@+id/wc_time"
@@ -55,8 +53,8 @@
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:maxLines="1"
-                android:textColor="#111111"
-                android:textSize="18sp"
+                android:textColor="#000000"
+                android:textSize="24sp"
                 android:textStyle="bold" />
         </FrameLayout>
 
@@ -66,11 +64,14 @@
             android:layout_height="wrap_content"
             android:format12Hour="EEE, yyyy, MMM d,a"
             android:format24Hour="EEE, yyyy, MMM d,a"
+            android:fontFamily="sans-serif-light"
             android:gravity="center"
+            android:includeFontPadding="false"
             android:maxLines="1"
-            android:paddingVertical="7dp"
-            android:textColor="#B3FFFFFF"
-            android:textSize="13.5sp" />
+            android:paddingTop="10dp"
+            android:paddingBottom="6dp"
+            android:textColor="#9EFFFFFF"
+            android:textSize="17.5sp" />
 
         <FrameLayout
             android:id="@+id/r1_row"
@@ -85,16 +86,15 @@
                 android:layout_height="match_parent"
                 android:importantForAccessibility="no"
                 android:scaleType="fitXY"
-                android:src="@drawable/pill_shape"
-                android:tint="#73000000" />
+                android:src="@drawable/pill_shape" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="21dp"
-                android:paddingEnd="30dp">
+                android:paddingStart="27dp"
+                android:paddingEnd="40dp">
 
                 <TextView
                     android:id="@+id/r1_name"
@@ -102,24 +102,24 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ellipsize="end"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="sans-serif"
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:text="LON"
                     android:textColor="#FFFFFF"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
 
                 <TextClock
                     android:id="@+id/r1_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="sans-serif"
                     android:format12Hour="hh:mm a"
                     android:format24Hour="hh:mm a"
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:textColor="#FFFFFF"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
         </FrameLayout>
 
@@ -136,16 +136,15 @@
                 android:layout_height="match_parent"
                 android:importantForAccessibility="no"
                 android:scaleType="fitXY"
-                android:src="@drawable/pill_shape"
-                android:tint="#73000000" />
+                android:src="@drawable/pill_shape" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="21dp"
-                android:paddingEnd="30dp">
+                android:paddingStart="27dp"
+                android:paddingEnd="40dp">
 
                 <TextView
                     android:id="@+id/r2_name"
@@ -153,24 +152,24 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ellipsize="end"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="sans-serif"
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:text="NEW"
                     android:textColor="#FFFFFF"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
 
                 <TextClock
                     android:id="@+id/r2_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="sans-serif"
                     android:format12Hour="hh:mm a"
                     android:format24Hour="hh:mm a"
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:textColor="#FFFFFF"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
         </FrameLayout>
 
@@ -188,16 +187,15 @@
                 android:layout_height="match_parent"
                 android:importantForAccessibility="no"
                 android:scaleType="fitXY"
-                android:src="@drawable/pill_shape"
-                android:tint="#73000000" />
+                android:src="@drawable/pill_shape" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="21dp"
-                android:paddingEnd="30dp">
+                android:paddingStart="27dp"
+                android:paddingEnd="40dp">
 
                 <TextView
                     android:id="@+id/r3_name"
@@ -205,24 +203,24 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ellipsize="end"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="sans-serif"
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:text=""
                     android:textColor="#FFFFFF"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
 
                 <TextClock
                     android:id="@+id/r3_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="sans-serif"
                     android:format12Hour="hh:mm a"
                     android:format24Hour="hh:mm a"
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:textColor="#FFFFFF"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
         </FrameLayout>
 
@@ -240,16 +238,15 @@
                 android:layout_height="match_parent"
                 android:importantForAccessibility="no"
                 android:scaleType="fitXY"
-                android:src="@drawable/pill_shape"
-                android:tint="#73000000" />
+                android:src="@drawable/pill_shape" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="21dp"
-                android:paddingEnd="30dp">
+                android:paddingStart="27dp"
+                android:paddingEnd="40dp">
 
                 <TextView
                     android:id="@+id/r4_name"
@@ -257,24 +254,24 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ellipsize="end"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="sans-serif"
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:text=""
                     android:textColor="#FFFFFF"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
 
                 <TextClock
                     android:id="@+id/r4_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="sans-serif"
                     android:format12Hour="hh:mm a"
                     android:format24Hour="hh:mm a"
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:textColor="#FFFFFF"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
         </FrameLayout>
 
@@ -292,16 +289,15 @@
                 android:layout_height="match_parent"
                 android:importantForAccessibility="no"
                 android:scaleType="fitXY"
-                android:src="@drawable/pill_shape"
-                android:tint="#73000000" />
+                android:src="@drawable/pill_shape" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="21dp"
-                android:paddingEnd="30dp">
+                android:paddingStart="27dp"
+                android:paddingEnd="40dp">
 
                 <TextView
                     android:id="@+id/r5_name"
@@ -309,24 +305,24 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ellipsize="end"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="sans-serif"
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:text=""
                     android:textColor="#FFFFFF"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
 
                 <TextClock
                     android:id="@+id/r5_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="sans-serif"
                     android:format12Hour="hh:mm a"
                     android:format24Hour="hh:mm a"
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:textColor="#FFFFFF"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
         </FrameLayout>
 
@@ -344,16 +340,15 @@
                 android:layout_height="match_parent"
                 android:importantForAccessibility="no"
                 android:scaleType="fitXY"
-                android:src="@drawable/pill_shape"
-                android:tint="#73000000" />
+                android:src="@drawable/pill_shape" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="21dp"
-                android:paddingEnd="30dp">
+                android:paddingStart="27dp"
+                android:paddingEnd="40dp">
 
                 <TextView
                     android:id="@+id/r6_name"
@@ -361,24 +356,24 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ellipsize="end"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="sans-serif"
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:text=""
                     android:textColor="#FFFFFF"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
 
                 <TextClock
                     android:id="@+id/r6_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="sans-serif"
                     android:format12Hour="hh:mm a"
                     android:format24Hour="hh:mm a"
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:textColor="#FFFFFF"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
         </FrameLayout>
     </LinearLayout>

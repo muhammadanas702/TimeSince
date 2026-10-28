@@ -14,7 +14,7 @@ import android.widget.TextView
 
 /**
  * Settings for one World clock widget: any number of cities from 1 to 6 (with search), names,
- * 12/24 hour, colors, and two transparency sliders (container and pills).
+ * 12/24 hour, text size, colors, and two transparency sliders (container and city pills).
  */
 class WorldClockConfigActivity : Activity() {
 
@@ -23,11 +23,13 @@ class WorldClockConfigActivity : Activity() {
     private var h24 = false
     private var shortNames = true
     private var pillOpacity = 75
+    private var textScale = 100
 
     private lateinit var panel: LookPanel
     private lateinit var host: FrameLayout
     private lateinit var btnH24: Button
     private lateinit var btnNames: Button
+    private lateinit var btnText: Button
     private lateinit var btnAdd: Button
     private lateinit var tvPill: TextView
     private lateinit var cityContainer: LinearLayout
@@ -52,6 +54,7 @@ class WorldClockConfigActivity : Activity() {
         host = findViewById(R.id.preview_host)
         btnH24 = findViewById(R.id.btn_h24)
         btnNames = findViewById(R.id.btn_names)
+        btnText = findViewById(R.id.btn_text_size)
         btnAdd = findViewById(R.id.btn_add_city)
         tvPill = findViewById(R.id.tv_pill)
         cityContainer = findViewById(R.id.cities_container)
@@ -62,6 +65,7 @@ class WorldClockConfigActivity : Activity() {
         h24 = cfg.h24
         shortNames = cfg.shortNames
         pillOpacity = cfg.pillOpacity
+        textScale = cfg.textScale
 
         panel = LookPanel(
             this,
@@ -98,6 +102,16 @@ class WorldClockConfigActivity : Activity() {
             refreshButtons()
             renderPreview()
         }
+        btnText.setOnClickListener {
+            // Small, Normal, Large, then Small again.
+            textScale = when {
+                textScale < 95 -> 100
+                textScale < 105 -> 115
+                else -> 85
+            }
+            refreshButtons()
+            renderPreview()
+        }
         findViewById<Button>(R.id.btn_save).setOnClickListener { save() }
 
         rebuildCities()
@@ -110,7 +124,8 @@ class WorldClockConfigActivity : Activity() {
         zones = zones.toList(),
         h24 = h24,
         shortNames = shortNames,
-        pillOpacity = pillOpacity
+        pillOpacity = pillOpacity,
+        textScale = textScale
     )
 
     private fun save() {
@@ -121,18 +136,17 @@ class WorldClockConfigActivity : Activity() {
     }
 
     /** The preview box grows with the number of cities, like a widget the user has made taller. */
-    private fun previewHeightDp(): Int = 150 + 38 * (zones.size - 2).coerceAtLeast(0)
+    private fun previewHeightDp(): Int = 169 + 38 * (zones.size - 2)
 
     private fun renderPreview() {
-        val heightDp = previewHeightDp()
-        val wanted = dp(heightDp)
+        val wanted = dp(previewHeightDp())
         val lp = host.layoutParams
         if (lp.height != wanted) {
             lp.height = wanted
             host.layoutParams = lp
         }
 
-        val views = WorldClockWidget.build(this, widgetId, currentConfig(), true, heightDp)
+        val views = WorldClockWidget.build(this, widgetId, currentConfig(), true)
         val existing = previewView
         if (existing == null) {
             host.removeAllViews()
@@ -211,6 +225,7 @@ class WorldClockConfigActivity : Activity() {
         btnH24.text = "24-hour clock: " + (if (h24) "On" else "Off")
         btnH24.setBackgroundResource(if (h24) R.drawable.bg_button_primary else R.drawable.bg_button_outline)
         btnH24.setTextColor(getColor(if (h24) R.color.on_accent else R.color.fg))
-        tvPill.text = "Pill opacity: " + pillOpacity + "%"
+        btnText.text = "Text size: " + (if (textScale < 95) "Small" else if (textScale < 105) "Normal" else "Large")
+        tvPill.text = "City pill opacity: " + pillOpacity + "%"
     }
 }
