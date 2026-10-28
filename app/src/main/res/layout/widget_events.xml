@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Event countdown. Up to four rows: event name, its date, and the days left. -->
+<!-- Event countdown. Up to four rows: event name, its date (and time), and the time left.
+     Under a day to go, a Chronometer ticks the countdown live; otherwise the text view shows it. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/w_root"
     android:layout_width="match_parent"
@@ -62,6 +63,18 @@
                 android:textColor="@color/accent"
                 android:textSize="15sp"
                 android:textStyle="bold" />
+
+            <Chronometer
+                android:id="@+id/e1_chrono"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:maxLines="1"
+                android:minWidth="64dp"
+                android:textColor="@color/accent"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
         </LinearLayout>
 
         <LinearLayout
@@ -105,6 +118,18 @@
                 android:textColor="@color/accent"
                 android:textSize="15sp"
                 android:textStyle="bold" />
+
+            <Chronometer
+                android:id="@+id/e2_chrono"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:maxLines="1"
+                android:minWidth="64dp"
+                android:textColor="@color/accent"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
         </LinearLayout>
 
         <LinearLayout
@@ -148,6 +173,18 @@
                 android:textColor="@color/accent"
                 android:textSize="15sp"
                 android:textStyle="bold" />
+
+            <Chronometer
+                android:id="@+id/e3_chrono"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:maxLines="1"
+                android:minWidth="64dp"
+                android:textColor="@color/accent"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
         </LinearLayout>
 
         <LinearLayout
@@ -192,6 +229,18 @@
                 android:textColor="@color/accent"
                 android:textSize="15sp"
                 android:textStyle="bold" />
+
+            <Chronometer
+                android:id="@+id/e4_chrono"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:maxLines="1"
+                android:minWidth="64dp"
+                android:textColor="@color/accent"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.appwidget.AppWidgetManager
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -25,8 +26,8 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 /**
- * Settings for one Event countdown widget: up to four events, each with an optional alert
- * (notification or ringtone), the alert time, colors and transparency.
+ * Settings for one Event countdown widget: up to four events, each with a date, an optional time and an
+ * optional alert (notification or ringtone), the alert time for events without a time, colors and transparency.
  */
 class EventsConfigActivity : Activity() {
 
@@ -34,9 +35,11 @@ class EventsConfigActivity : Activity() {
         val name: EditText,
         val dateButton: Button,
         val yearly: CheckBox,
+        val timeButton: Button,
         val alertButton: Button
     ) {
         var value: LocalDate? = null
+        var minutes = -1
         var alert = EventAlerts.MODE_OFF
     }
 
@@ -80,6 +83,7 @@ class EventsConfigActivity : Activity() {
                 row.findViewById<EditText>(R.id.ev_name),
                 row.findViewById<Button>(R.id.ev_date),
                 row.findViewById<CheckBox>(R.id.ev_yearly),
+                row.findViewById<Button>(R.id.ev_time),
                 row.findViewById<Button>(R.id.ev_alert)
             )
             val clear = row.findViewById<Button>(R.id.ev_clear)
@@ -91,6 +95,7 @@ class EventsConfigActivity : Activity() {
                 slot.value = saved.date
                 slot.yearly.isChecked = saved.yearly
                 slot.alert = saved.alert
+                slot.minutes = saved.minutes
             }
             refreshSlot(slot)
 
@@ -103,6 +108,7 @@ class EventsConfigActivity : Activity() {
             })
             slot.dateButton.setOnClickListener { pickDate(slot) }
             slot.yearly.setOnCheckedChangeListener { _, _ -> renderPreview() }
+            slot.timeButton.setOnClickListener { pickEventTime(slot) }
             slot.alertButton.setOnClickListener {
                 // Off, then Notification, then Ringtone, then Off again.
                 slot.alert = (slot.alert + 1) % 3
@@ -113,6 +119,7 @@ class EventsConfigActivity : Activity() {
                 slot.name.setText("")
                 slot.value = null
                 slot.yearly.isChecked = false
+                slot.minutes = -1
                 slot.alert = EventAlerts.MODE_OFF
                 refreshSlot(slot)
                 renderPreview()
@@ -136,7 +143,7 @@ class EventsConfigActivity : Activity() {
         for (slot in slots) {
             val date = slot.value ?: continue
             val name = slot.name.text.toString().trim().ifEmpty { "Event" }
-            events.add(EventItem(name, date, slot.yearly.isChecked, slot.alert))
+            events.add(EventItem(name, date, slot.yearly.isChecked, slot.alert, slot.minutes))
         }
         return EventsCfg(look = panel.look, events = events, notifyMinutes = notifyMinutes)
     }
@@ -175,6 +182,26 @@ class EventsConfigActivity : Activity() {
         ).show()
     }
 
+    /** The time of one event. "No time" in the dialog goes back to counting days only. */
+    private fun pickEventTime(slot: Slot) {
+        val start = if (slot.minutes >= 0) slot.minutes else 9 * 60
+        val dialog = TimePickerDialog(
+            this,
+            { _, h, m ->
+                slot.minutes = h * 60 + m
+                refreshSlot(slot)
+                renderPreview()
+            },
+            start / 60, start % 60, false
+        )
+        dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "No time") { _, _ ->
+            slot.minutes = -1
+            refreshSlot(slot)
+            renderPreview()
+        }
+        dialog.show()
+    }
+
     private fun pickAlertTime() {
         TimePickerDialog(
             this,
@@ -190,6 +217,12 @@ class EventsConfigActivity : Activity() {
         val date = slot.value
         slot.dateButton.text = if (date == null) "Pick date" else DATE_FMT.format(date)
 
+        val timed = slot.minutes >= 0
+        slot.timeButton.text = "Time: " +
+            (if (timed) TIME_FMT.format(LocalTime.of(slot.minutes / 60, slot.minutes % 60)) else "none")
+        slot.timeButton.setBackgroundResource(if (timed) R.drawable.bg_button_primary else R.drawable.bg_button_outline)
+        slot.timeButton.setTextColor(getColor(if (timed) R.color.on_accent else R.color.fg))
+
         val on = slot.alert != EventAlerts.MODE_OFF
         slot.alertButton.text = "Alert: " + EventAlerts.modeLabel(slot.alert)
         slot.alertButton.setBackgroundResource(if (on) R.drawable.bg_button_primary else R.drawable.bg_button_outline)
@@ -197,7 +230,7 @@ class EventsConfigActivity : Activity() {
     }
 
     private fun refreshTimeButton() {
-        btnTime.text = "Alert time: " + TIME_FMT.format(LocalTime.of(notifyMinutes / 60, notifyMinutes % 60))
+        btnTime.text = "All-day alert time: " + TIME_FMT.format(LocalTime.of(notifyMinutes / 60, notifyMinutes % 60))
     }
 
     /** Shows one alert now, in the strongest style chosen on any event, so the sound can be checked. */

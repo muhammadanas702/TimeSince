@@ -4,15 +4,19 @@ import android.content.Context
 import android.content.SharedPreferences
 import java.time.LocalDate
 
-/** [alert]: 0 = none, 1 = notification, 2 = notification with the phone's ringtone. */
+/**
+ * [alert]: 0 = none, 1 = notification, 2 = notification with the phone's ringtone.
+ * [minutes] is the time of the event in minutes after midnight, or -1 for an event without a time.
+ */
 data class EventItem(
     val name: String,
     val date: LocalDate,
     val yearly: Boolean = false,
-    val alert: Int = 0
+    val alert: Int = 0,
+    val minutes: Int = -1
 )
 
-/** [notifyMinutes] is the time of day of the alerts, in minutes after midnight (540 = 9:00 AM). */
+/** [notifyMinutes] is the alert time (minutes after midnight, 540 = 9:00 AM) for events that have no time of their own. */
 data class EventsCfg(
     val look: Look = Look(),
     val events: List<EventItem> = emptyList(),
@@ -201,7 +205,7 @@ object ExtraStore {
         // Names must not contain the two separator characters.
         val text = cfg.events.joinToString(";") {
             val clean = it.name.replace('|', ' ').replace(';', ' ').replace('\n', ' ')
-            clean + "|" + it.date.toString() + "|" + (if (it.yearly) "1" else "0") + "|" + it.alert
+            clean + "|" + it.date.toString() + "|" + (if (it.yearly) "1" else "0") + "|" + it.alert + "|" + it.minutes
         }
         e.putString("events_list_$id", text)
         e.putInt("events_notify_$id", cfg.notifyMinutes)
@@ -211,15 +215,16 @@ object ExtraStore {
 
     private fun parseEvents(raw: String): List<EventItem> = raw.split(";").mapNotNull {
         val parts = it.split("|")
-        // Three parts: older saves without an alert. Four parts: with the alert choice.
-        if (parts.size != 3 && parts.size != 4) return@mapNotNull null
+        // Three parts: older saves. Four: with the alert choice. Five: with the time of the event.
+        if (parts.size < 3 || parts.size > 5) return@mapNotNull null
         val date = try {
             LocalDate.parse(parts[1])
         } catch (e: Exception) {
             return@mapNotNull null
         }
-        val alert = if (parts.size == 4) (parts[3].toIntOrNull() ?: 0).coerceIn(0, 2) else 0
-        EventItem(parts[0], date, parts[2] == "1", alert)
+        val alert = if (parts.size >= 4) (parts[3].toIntOrNull() ?: 0).coerceIn(0, 2) else 0
+        val minutes = if (parts.size == 5) (parts[4].toIntOrNull() ?: -1) else -1
+        EventItem(parts[0], date, parts[2] == "1", alert, if (minutes in 0..1439) minutes else -1)
     }
 
     private fun parseZones(raw: String): List<Zone> = raw.split(";").mapNotNull {

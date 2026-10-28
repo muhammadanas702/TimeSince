@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- One event in the Event countdown settings: name, date, "every year" and clear. -->
+<!-- One event in the Event countdown settings: name, date, "every year", clear, time and alert. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -75,15 +75,36 @@
             android:textSize="22sp" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/ev_alert"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="46dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:background="@drawable/bg_button_outline"
-        android:stateListAnimator="@null"
-        android:text="Alert: Off"
-        android:textAllCaps="false"
-        android:textColor="@color/fg"
-        android:textSize="15sp" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/ev_time"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_marginEnd="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button_outline"
+            android:stateListAnimator="@null"
+            android:text="Time: none"
+            android:textAllCaps="false"
+            android:textColor="@color/fg"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/ev_alert"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button_outline"
+            android:stateListAnimator="@null"
+            android:text="Alert: Off"
+            android:textAllCaps="false"
+            android:textColor="@color/fg"
+            android:textSize="15sp" />
+    </LinearLayout>
 </LinearLayout>

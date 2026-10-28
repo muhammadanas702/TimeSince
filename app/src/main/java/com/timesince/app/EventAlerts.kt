@@ -12,13 +12,14 @@ import android.content.Intent
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.os.Build
+import java.time.LocalDateTime
 
 /**
  * Alerts for the Event Countdown widget: when an event's date arrives, a notification, or a
  * notification that rings with the phone's ringtone.
  *
- * One alarm is kept for the next alert of all widgets. When it fires, [process] sends what is due
- * and sets the alarm for the one after. [process] is also called whenever a widget updates, after a
+ * One alarm is kept for the next alert (or the next change of the widget text) of all widgets. When it
+ * fires, [process] sends what is due and sets the alarm for the one after. [process] is also called whenever a widget updates, after a
  * reboot and when the clock or time zone changes, so a lost alarm is always put back.
  */
 object EventAlerts {
@@ -52,14 +53,18 @@ object EventAlerts {
             val cursor = ExtraStore.alertCursor(context, id, now)
             for (event in cfg.events) {
                 if (event.alert == MODE_OFF) continue
-                for (moment in EventMath.triggersBetween(event, cfg.notifyMinutes, cursor, now)) {
-                    if (now - moment <= LATE_LIMIT_MS) {
-                        post(context, event.name, event.alert, "Your countdown is over. It's today!")
-                    }
+                // An event with a time alerts at that time; one without uses the widget's alert time.
+                val minutes = if (event.minutes >= 0) event.minutes else cfg.notifyMinutes
+                val text = if (event.minutes >= 0) "It's time!" else "Your countdown is over. It's today!"
+                for (moment in EventMath.triggersBetween(event, minutes, cursor, now)) {
+                    if (now - moment <= LATE_LIMIT_MS) post(context, event.name, event.alert, text)
                 }
-                val upcoming = EventMath.nextTrigger(event, cfg.notifyMinutes, now)
+                val upcoming = EventMath.nextTrigger(event, minutes, now)
                 if (upcoming != null && upcoming < next) next = upcoming
             }
+            // The widget text changes by itself too (hours, then "Now"), so the same alarm wakes it up.
+            val refresh = EventMath.nextRefresh(cfg.events, LocalDateTime.now(), now)
+            if (refresh != null && refresh < next) next = refresh
             ExtraStore.setAlertCursor(context, id, now)
         }
 

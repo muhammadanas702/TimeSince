@@ -81,7 +81,7 @@
             android:layout_marginTop="8dp"
             android:background="@drawable/bg_button_outline"
             android:stateListAnimator="@null"
-            android:text="Alert time: 9:00 AM"
+            android:text="All-day alert time: 9:00 AM"
             android:textAllCaps="false"
             android:textColor="@color/fg"
             android:textSize="15sp" />
@@ -103,7 +103,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:text="Set Alert on an event to Notification or Ringtone. On the event's date, at the alert time, you get a notification. A ringtone alert also rings with your phone's ringtone until you tap or swipe it away (at most one minute). The alerts of a widget stop if you remove the widget. On some phones you also need to allow this app to run in the background (auto-start or battery settings)."
+            android:text="Give an event a Time to count down to the minute: under a day to go the widget ticks live, and the alert comes at that time. Events without a time count days and alert at the all-day alert time. Set Alert to Notification or Ringtone; a ringtone alert rings with your phone's ringtone until you tap or swipe it away (at most one minute). The alerts of a widget stop if you remove the widget. On some phones you also need to allow this app to run in the background (auto-start or battery settings)."
             android:textColor="@color/muted"
             android:textSize="12sp" />
 

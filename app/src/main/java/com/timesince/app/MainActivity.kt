@@ -364,13 +364,13 @@ class MainActivity : Activity() {
 
     private fun describeEvents(id: Int): ListInfo {
         val cfg = ExtraStore.readEvents(this, id)
-        val next = EventMath.order(cfg.events, LocalDate.now()).firstOrNull()
+        val next = EventMath.order(cfg.events, LocalDateTime.now()).firstOrNull()
         val sub = if (next == null) {
             "No events yet. Tap to add some."
         } else {
             val n = cfg.events.size
             n.toString() + (if (n == 1) " event" else " events") + " · " +
-                next.item.name + ": " + EventMath.label(next.days)
+                next.item.name + ": " + EventMath.label(next)
         }
         return ListInfo("Event Countdown", sub, cfg.look.accent)
     }
