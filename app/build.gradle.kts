@@ -23,11 +23,17 @@ android {
         applicationId = "com.timesince.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 11
-        versionName = "2.9"
+        versionCode = 12
+        versionName = "3.0"
     }
 
     buildTypes {
+        // The APK that is published is the "debug" build type, because it is signed with the fixed key above.
+        // It is not marked debuggable: a debuggable app looks like a developer test build to Android's
+        // scanners and is easier to tamper with. Same key, so updates still install over old versions.
+        debug {
+            isDebuggable = false
+        }
         release {
             isMinifyEnabled = false
         }

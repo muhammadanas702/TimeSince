@@ -220,5 +220,14 @@
             android:text="The app only goes online to look for updates on GitHub."
             android:textColor="@color/muted"
             android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:lineSpacingExtra="2dp"
+            android:text="If Android or Play Protect says this app is harmful or unknown: that appears for every app outside Google Play that Google has not seen before. It does not mean the app is harmful. Tap More details, then Install anyway (or Scan app, then Install). In Chrome, tap Download anyway or Keep. Updating from inside this app avoids the Chrome warning."
+            android:textColor="@color/muted"
+            android:textSize="12sp" />
     </LinearLayout>
 </ScrollView>

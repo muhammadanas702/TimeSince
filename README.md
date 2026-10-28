@@ -36,6 +36,15 @@ Open the app and, when a newer release exists on this repository's Releases page
 - The APK is streamed straight into Android's installer, so nothing is saved on the phone and no file provider is needed.
 - Only version 2.6 and newer have this. Install 2.6 once from the Releases page; every release after it shows up in the app.
 
+## "Harmful app" warnings when installing
+
+Chrome warns about every APK it downloads ("This type of file can harm your device"), and Play Protect may say the app is unknown or "harmful" because it is not on Google Play and Google has not seen this exact file before (every new version is a new file). Neither means the app does anything bad: it has no ads, no analytics and uses the internet only to ask GitHub for a newer release.
+
+- In Chrome tap **Download anyway** or **Keep**.
+- In the Play Protect box tap **More details**, then **Install anyway** (or **Scan app** and then install).
+- Updating from inside the app avoids the Chrome warning, because the app downloads the file itself.
+- Since version 3.0 the APK is no longer marked *debuggable*, which makes it look less like a developer test build. The only complete fix is publishing through Google Play, which needs a developer account and a private release key.
+
 ## How the widget stays live
 
 Android does not let a widget redraw itself every second. The widget is split in two:

@@ -38,6 +38,21 @@ class UpdateInstallReceiver : BroadcastReceiver() {
             PackageInstaller.STATUS_FAILURE_ABORTED -> {
                 Toast.makeText(context, "Update cancelled.", Toast.LENGTH_SHORT).show()
             }
+            // Play Protect or the phone's policy stopped it. The user can still choose "Install anyway".
+            PackageInstaller.STATUS_FAILURE_BLOCKED -> {
+                Toast.makeText(
+                    context,
+                    "Android blocked the update. Tap Update now again, then More details and Install anyway.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            PackageInstaller.STATUS_FAILURE_CONFLICT -> {
+                Toast.makeText(
+                    context,
+                    "This build is signed differently from the installed app. Uninstall it once, then install the new APK.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
             else -> {
                 val why = intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE).orEmpty()
                 Toast.makeText(
