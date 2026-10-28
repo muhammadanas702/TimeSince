@@ -74,4 +74,16 @@
             android:textColor="@color/muted"
             android:textSize="22sp" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/ev_alert"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_button_outline"
+        android:stateListAnimator="@null"
+        android:text="Alert: Off"
+        android:textAllCaps="false"
+        android:textColor="@color/fg"
+        android:textSize="15sp" />
 </LinearLayout>

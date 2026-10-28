@@ -3,6 +3,13 @@
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <!-- Event alerts: show a notification, and fire at the exact minute of the event. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission
+        android:name="android.permission.SCHEDULE_EXACT_ALARM"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -92,6 +99,11 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/world_widget_info" />
         </receiver>
+
+        <!-- Receives the alarm that announces an event. Only our own alarm reaches it. -->
+        <receiver
+            android:name=".EventAlarmReceiver"
+            android:exported="false" />
 
         <!-- Event countdown widget and its settings screen. -->
         <activity

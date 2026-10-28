@@ -4,15 +4,19 @@ import android.content.Context
 import android.content.SharedPreferences
 import java.time.LocalDate
 
+/** [alert]: 0 = none, 1 = notification, 2 = notification with the phone's ringtone. */
 data class EventItem(
     val name: String,
     val date: LocalDate,
-    val yearly: Boolean = false
+    val yearly: Boolean = false,
+    val alert: Int = 0
 )
 
+/** [notifyMinutes] is the time of day of the alerts, in minutes after midnight (540 = 9:00 AM). */
 data class EventsCfg(
     val look: Look = Look(),
-    val events: List<EventItem> = emptyList()
+    val events: List<EventItem> = emptyList(),
+    val notifyMinutes: Int = 540
 )
 
 /** [offset] is the month being shown, counted from the current month (0 = this month). */
@@ -155,8 +159,27 @@ object ExtraStore {
         val raw = p.getString("events_list_$id", null)
         return EventsCfg(
             look = readLook(p, "events", id),
-            events = if (raw.isNullOrEmpty()) emptyList() else parseEvents(raw)
+            events = if (raw.isNullOrEmpty()) emptyList() else parseEvents(raw),
+            notifyMinutes = p.getInt("events_notify_$id", 540).coerceIn(0, 1439)
         )
+    }
+
+    /**
+     * Alerts are sent for every moment after this one. Saving the settings sets it to "now", so
+     * dates already past are not announced.
+     */
+    fun alertCursor(c: Context, id: Int, default: Long): Long {
+        val p = prefs(c)
+        val key = "events_cursor_$id"
+        if (!p.contains(key)) {
+            p.edit().putLong(key, default).apply()
+            return default
+        }
+        return p.getLong(key, default)
+    }
+
+    fun setAlertCursor(c: Context, id: Int, value: Long) {
+        prefs(c).edit().putLong("events_cursor_$id", value).apply()
     }
 
     fun writeEvents(c: Context, id: Int, cfg: EventsCfg) {
@@ -165,21 +188,25 @@ object ExtraStore {
         // Names must not contain the two separator characters.
         val text = cfg.events.joinToString(";") {
             val clean = it.name.replace('|', ' ').replace(';', ' ').replace('\n', ' ')
-            clean + "|" + it.date.toString() + "|" + (if (it.yearly) "1" else "0")
+            clean + "|" + it.date.toString() + "|" + (if (it.yearly) "1" else "0") + "|" + it.alert
         }
         e.putString("events_list_$id", text)
+        e.putInt("events_notify_$id", cfg.notifyMinutes)
+        e.putLong("events_cursor_$id", System.currentTimeMillis())
         e.apply()
     }
 
     private fun parseEvents(raw: String): List<EventItem> = raw.split(";").mapNotNull {
         val parts = it.split("|")
-        if (parts.size != 3) return@mapNotNull null
+        // Three parts: older saves without an alert. Four parts: with the alert choice.
+        if (parts.size != 3 && parts.size != 4) return@mapNotNull null
         val date = try {
             LocalDate.parse(parts[1])
         } catch (e: Exception) {
             return@mapNotNull null
         }
-        EventItem(parts[0], date, parts[2] == "1")
+        val alert = if (parts.size == 4) (parts[3].toIntOrNull() ?: 0).coerceIn(0, 2) else 0
+        EventItem(parts[0], date, parts[2] == "1", alert)
     }
 
     private fun parseZones(raw: String): List<Zone> = raw.split(";").mapNotNull {

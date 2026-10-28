@@ -46,6 +46,8 @@ class EventsWidget : AppWidgetProvider() {
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
         appWidgetIds.forEach { ExtraStore.remove(context, it) }
+        // The alerts of a removed widget stop with it.
+        EventAlerts.process(context)
     }
 
     override fun onDisabled(context: Context) {
@@ -58,6 +60,8 @@ class EventsWidget : AppWidgetProvider() {
         private val DATE_FMT = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.ENGLISH)
 
         fun updateAll(context: Context) {
+            // Sends alerts that are due and keeps the alarm for the next one in place.
+            EventAlerts.process(context)
             val manager = AppWidgetManager.getInstance(context)
             val ids = manager.getAppWidgetIds(ComponentName(context, EventsWidget::class.java))
             if (ids.isEmpty()) {

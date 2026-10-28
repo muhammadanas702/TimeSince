@@ -64,6 +64,49 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:letterSpacing="0.16"
+            android:text="Alerts"
+            android:textAllCaps="true"
+            android:textColor="@color/muted"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btn_notify_time"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_button_outline"
+            android:stateListAnimator="@null"
+            android:text="Alert time: 9:00 AM"
+            android:textAllCaps="false"
+            android:textColor="@color/fg"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/btn_test_alert"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_button_outline"
+            android:stateListAnimator="@null"
+            android:text="Send a test alert"
+            android:textAllCaps="false"
+            android:textColor="@color/accent"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Set Alert on an event to Notification or Ringtone. On the event's date, at the alert time, you get a notification. A ringtone alert also rings with your phone's ringtone until you tap or swipe it away (at most one minute). The alerts of a widget stop if you remove the widget. On some phones you also need to allow this app to run in the background (auto-start or battery settings)."
+            android:textColor="@color/muted"
+            android:textSize="12sp" />
+
         <include
             layout="@layout/view_look"
             android:layout_width="match_parent"

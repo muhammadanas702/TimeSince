@@ -24,9 +24,9 @@
     <string name="widget_label_clock">Clock and Date</string>
     <string name="widget_label_world">World Clock</string>
     <string name="widget_description_clock">A big live clock with today\'s date. Choose 12 or 24 hour, seconds, colors and transparency.</string>
-    <string name="widget_description_world">Frosted-glass clock: your phone\'s time in a bright pill, the date, and two or three cities. Search any city or country, and choose names, colors and transparency.</string>
+    <string name="widget_description_world">Frosted-glass clock: your phone\'s time in a bright pill, the date, and any number of cities, one to six. Search any city or country, and choose names, colors and transparency.</string>
     <string name="widget_label_events">Event Countdown</string>
-    <string name="widget_description_events">Up to four events in one widget, each with the days left. Birthdays and anniversaries can repeat every year.</string>
+    <string name="widget_description_events">Up to four events in one widget, each with the days left. Birthdays and anniversaries can repeat every year, and each event can alert you with a notification or your ringtone.</string>
     <string name="widget_label_calendar">Month Calendar</string>
     <string name="widget_description_calendar">A month at a glance with today circled. Use the arrows to look at other months. Choose the first day of the week, colors and transparency.</string>
     <string name="note">About Time Since: Android cannot redraw a widget every second. Days, hours and the rest refresh every hour, while minutes and seconds tick live. Tap a widget any time to change it.</string>

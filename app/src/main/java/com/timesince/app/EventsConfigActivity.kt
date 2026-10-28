@@ -1,9 +1,13 @@
 package com.timesince.app
 
+import android.Manifest
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.appwidget.AppWidgetManager
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,26 +18,35 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-/** Settings for one Event countdown widget: up to four events, colors and transparency. */
+/**
+ * Settings for one Event countdown widget: up to four events, each with an optional alert
+ * (notification or ringtone), the alert time, colors and transparency.
+ */
 class EventsConfigActivity : Activity() {
 
     private class Slot(
         val name: EditText,
         val dateButton: Button,
-        val yearly: CheckBox
+        val yearly: CheckBox,
+        val alertButton: Button
     ) {
         var value: LocalDate? = null
+        var alert = EventAlerts.MODE_OFF
     }
 
     private var widgetId = AppWidgetManager.INVALID_APPWIDGET_ID
     private val slots = ArrayList<Slot>()
+    private var notifyMinutes = 540
 
     private lateinit var panel: LookPanel
     private lateinit var host: FrameLayout
+    private lateinit var btnTime: Button
     private var previewView: View? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,8 +66,10 @@ class EventsConfigActivity : Activity() {
         setContentView(R.layout.activity_config_events)
 
         host = findViewById(R.id.preview_host)
+        btnTime = findViewById(R.id.btn_notify_time)
         val container = findViewById<LinearLayout>(R.id.events_container)
         val cfg = ExtraStore.readEvents(this, widgetId)
+        notifyMinutes = cfg.notifyMinutes
 
         for (i in 0 until MAX_EVENTS) {
             val row = layoutInflater.inflate(R.layout.item_event_slot, container, false)
@@ -64,7 +79,8 @@ class EventsConfigActivity : Activity() {
             val slot = Slot(
                 row.findViewById<EditText>(R.id.ev_name),
                 row.findViewById<Button>(R.id.ev_date),
-                row.findViewById<CheckBox>(R.id.ev_yearly)
+                row.findViewById<CheckBox>(R.id.ev_yearly),
+                row.findViewById<Button>(R.id.ev_alert)
             )
             val clear = row.findViewById<Button>(R.id.ev_clear)
 
@@ -74,6 +90,7 @@ class EventsConfigActivity : Activity() {
                 slot.name.setText(saved.name)
                 slot.value = saved.date
                 slot.yearly.isChecked = saved.yearly
+                slot.alert = saved.alert
             }
             refreshSlot(slot)
 
@@ -86,10 +103,17 @@ class EventsConfigActivity : Activity() {
             })
             slot.dateButton.setOnClickListener { pickDate(slot) }
             slot.yearly.setOnCheckedChangeListener { _, _ -> renderPreview() }
+            slot.alertButton.setOnClickListener {
+                // Off, then Notification, then Ringtone, then Off again.
+                slot.alert = (slot.alert + 1) % 3
+                if (slot.alert != EventAlerts.MODE_OFF) askNotificationPermission()
+                refreshSlot(slot)
+            }
             clear.setOnClickListener {
                 slot.name.setText("")
                 slot.value = null
                 slot.yearly.isChecked = false
+                slot.alert = EventAlerts.MODE_OFF
                 refreshSlot(slot)
                 renderPreview()
             }
@@ -97,8 +121,12 @@ class EventsConfigActivity : Activity() {
         }
 
         panel = LookPanel(this, findViewById<View>(android.R.id.content), cfg.look) { renderPreview() }
+
+        btnTime.setOnClickListener { pickAlertTime() }
+        findViewById<Button>(R.id.btn_test_alert).setOnClickListener { sendTestAlert() }
         findViewById<Button>(R.id.btn_save).setOnClickListener { save() }
 
+        refreshTimeButton()
         renderPreview()
     }
 
@@ -108,9 +136,9 @@ class EventsConfigActivity : Activity() {
         for (slot in slots) {
             val date = slot.value ?: continue
             val name = slot.name.text.toString().trim().ifEmpty { "Event" }
-            events.add(EventItem(name, date, slot.yearly.isChecked))
+            events.add(EventItem(name, date, slot.yearly.isChecked, slot.alert))
         }
-        return EventsCfg(look = panel.look, events = events)
+        return EventsCfg(look = panel.look, events = events, notifyMinutes = notifyMinutes)
     }
 
     private fun save() {
@@ -147,13 +175,57 @@ class EventsConfigActivity : Activity() {
         ).show()
     }
 
+    private fun pickAlertTime() {
+        TimePickerDialog(
+            this,
+            { _, h, m ->
+                notifyMinutes = h * 60 + m
+                refreshTimeButton()
+            },
+            notifyMinutes / 60, notifyMinutes % 60, false
+        ).show()
+    }
+
     private fun refreshSlot(slot: Slot) {
         val date = slot.value
         slot.dateButton.text = if (date == null) "Pick date" else DATE_FMT.format(date)
+
+        val on = slot.alert != EventAlerts.MODE_OFF
+        slot.alertButton.text = "Alert: " + EventAlerts.modeLabel(slot.alert)
+        slot.alertButton.setBackgroundResource(if (on) R.drawable.bg_button_primary else R.drawable.bg_button_outline)
+        slot.alertButton.setTextColor(getColor(if (on) R.color.on_accent else R.color.fg))
+    }
+
+    private fun refreshTimeButton() {
+        btnTime.text = "Alert time: " + TIME_FMT.format(LocalTime.of(notifyMinutes / 60, notifyMinutes % 60))
+    }
+
+    /** Shows one alert now, in the strongest style chosen on any event, so the sound can be checked. */
+    private fun sendTestAlert() {
+        if (!notificationsAllowed()) {
+            askNotificationPermission()
+            Toast.makeText(this, "Allow notifications, then tap the test again.", Toast.LENGTH_LONG).show()
+            return
+        }
+        val strongest = slots.maxOfOrNull { it.alert } ?: EventAlerts.MODE_OFF
+        val mode = if (strongest == EventAlerts.MODE_OFF) EventAlerts.MODE_NOTIFY else strongest
+        EventAlerts.post(this, "Test alert", mode, "This is how an alert from your Event Countdown looks and sounds.")
+    }
+
+    private fun notificationsAllowed(): Boolean =
+        Build.VERSION.SDK_INT < 33 ||
+            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+
+    /** Android 13 and newer ask before an app may show notifications. */
+    private fun askNotificationPermission() {
+        if (!notificationsAllowed()) {
+            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+        }
     }
 
     companion object {
         private const val MAX_EVENTS = 4
         private val DATE_FMT = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.ENGLISH)
+        private val TIME_FMT = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH)
     }
 }
