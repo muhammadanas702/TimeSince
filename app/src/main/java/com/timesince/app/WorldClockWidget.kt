@@ -22,12 +22,14 @@ private val WORLD_ROWS = listOf(
 )
 
 /**
- * Text sizes in sp by number of cities (1 to 6). Two cities match the reference widget: clock 24, date 17.5,
- * city text 14. More cities share the same height, so the text gets a little smaller.
+ * Text sizes by number of cities (1 to 6), in dp and not in sp: the reference widget does not follow the
+ * phone's font-size setting, and a phone set to "small" text made this widget's text about 15% smaller.
+ * Two cities match the reference measured on screen: clock 23.5, date 17, city text 13.5.
+ * More cities share the same height, so the text gets a little smaller.
  */
-private val WORLD_CLOCK_SP = floatArrayOf(24f, 24f, 22f, 20f, 19f, 18f)
-private val WORLD_DATE_SP = floatArrayOf(17.5f, 17.5f, 16f, 15f, 14.5f, 14f)
-private val WORLD_ROW_SP = floatArrayOf(14f, 14f, 13.5f, 13f, 12f, 11.5f)
+private val WORLD_CLOCK_DP = floatArrayOf(23.5f, 23.5f, 22f, 20f, 19f, 18f)
+private val WORLD_DATE_DP = floatArrayOf(17f, 17f, 16f, 15f, 14.5f, 14f)
+private val WORLD_ROW_DP = floatArrayOf(13.5f, 13.5f, 13f, 12.5f, 12f, 11.5f)
 
 /**
  * World clock in a frosted-glass design: the phone's own time in a colored pill, the date, and one to
@@ -62,6 +64,12 @@ class WorldClockWidget : AppWidgetProvider() {
             }
         }
 
+        /** Wraps a name in quotes so a time format shows it as plain text (an apostrophe is written twice). */
+        private fun literal(name: String): String {
+            val text = name.ifBlank { " " }
+            return "'" + text.replace("'", "''") + "'"
+        }
+
         /** Also used by the settings screen with preview = true. */
         fun build(
             context: Context,
@@ -81,9 +89,9 @@ class WorldClockWidget : AppWidgetProvider() {
             // depend on the size the launcher reports, because launchers report it differently.
             val count = cfg.zones.size.coerceIn(1, WorldCfg.MAX_CITIES)
             val scale = cfg.textScale.coerceIn(70, 130) / 100f
-            val rowText = WORLD_ROW_SP[count - 1] * scale
-            val clockText = WORLD_CLOCK_SP[count - 1] * scale
-            val dateText = WORLD_DATE_SP[count - 1] * scale
+            val rowText = WORLD_ROW_DP[count - 1] * scale
+            val clockText = WORLD_CLOCK_DP[count - 1] * scale
+            val dateText = WORLD_DATE_DP[count - 1] * scale
 
             // The phone's own time in the colored pill. A TextClock picks 12 or 24 hour from the
             // phone's setting, so both formats get the same pattern and the widget's choice wins.
@@ -98,14 +106,14 @@ class WorldClockWidget : AppWidgetProvider() {
                 R.id.wc_time,
                 if (LookUtil.isLight(look.accent)) 0xFF000000.toInt() else 0xFFFFFFFF.toInt()
             )
-            views.setTextViewTextSize(R.id.wc_time, TypedValue.COMPLEX_UNIT_SP, clockText)
+            views.setTextViewTextSize(R.id.wc_time, TypedValue.COMPLEX_UNIT_DIP, clockText)
 
             // Date line, written like the sample: Mon, 2026, Oct 26,PM
             val date = if (cfg.h24) "EEE, yyyy, MMM d" else "EEE, yyyy, MMM d,a"
             views.setCharSequence(R.id.wc_date, "setFormat12Hour", date)
             views.setCharSequence(R.id.wc_date, "setFormat24Hour", date)
             views.setTextColor(R.id.wc_date, (look.fg and 0x00FFFFFF) or (0x9E shl 24))
-            views.setTextViewTextSize(R.id.wc_date, TypedValue.COMPLEX_UNIT_SP, dateText)
+            views.setTextViewTextSize(R.id.wc_date, TypedValue.COMPLEX_UNIT_DIP, dateText)
 
             // City pills: dark on bright text colors, bright on dark ones.
             val light = LookUtil.isLight(look.fg)
@@ -123,15 +131,18 @@ class WorldClockWidget : AppWidgetProvider() {
                     views.setInt(r.bg, "setColorFilter", pillBase)
                     views.setInt(r.bg, "setImageAlpha", pillAlpha)
 
-                    views.setTextViewText(r.name, if (cfg.shortNames) Cities.shortName(zone) else zone.name)
+                    // The name is a TextClock with a fixed-text format, so it is drawn exactly like the time.
+                    val label = literal(if (cfg.shortNames) Cities.shortName(zone) else zone.name)
+                    views.setCharSequence(r.name, "setFormat12Hour", label)
+                    views.setCharSequence(r.name, "setFormat24Hour", label)
                     views.setTextColor(r.name, look.fg)
-                    views.setTextViewTextSize(r.name, TypedValue.COMPLEX_UNIT_SP, rowText)
+                    views.setTextViewTextSize(r.name, TypedValue.COMPLEX_UNIT_DIP, rowText)
 
                     views.setString(r.time, "setTimeZone", tz)
                     views.setCharSequence(r.time, "setFormat12Hour", timePattern)
                     views.setCharSequence(r.time, "setFormat24Hour", timePattern)
                     views.setTextColor(r.time, look.fg)
-                    views.setTextViewTextSize(r.time, TypedValue.COMPLEX_UNIT_SP, rowText)
+                    views.setTextViewTextSize(r.time, TypedValue.COMPLEX_UNIT_DIP, rowText)
                 } else {
                     views.setViewVisibility(r.row, View.GONE)
                 }

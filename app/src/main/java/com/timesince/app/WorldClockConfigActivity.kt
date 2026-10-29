@@ -102,6 +102,16 @@ class WorldClockConfigActivity : Activity() {
             refreshButtons()
             renderPreview()
         }
+        findViewById<Button>(R.id.btn_reset_look).setOnClickListener {
+            // Back to the reference look: Glass colors, container 15%, city pills 75%, normal text.
+            val start = WorldCfg()
+            panel.setLook(start.look)
+            pillOpacity = start.pillOpacity
+            sbPill.progress = pillOpacity
+            textScale = start.textScale
+            refreshButtons()
+            renderPreview()
+        }
         btnText.setOnClickListener {
             // Small, Normal, Large, then Small again.
             textScale = when {

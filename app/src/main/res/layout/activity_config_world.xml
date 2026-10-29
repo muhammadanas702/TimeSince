@@ -113,6 +113,27 @@
             android:textColor="@color/fg"
             android:textSize="15sp" />
 
+        <Button
+            android:id="@+id/btn_reset_look"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_button_outline"
+            android:stateListAnimator="@null"
+            android:text="Reset to the reference look"
+            android:textAllCaps="false"
+            android:textColor="@color/accent"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="The reference look is the Glass color theme with the background at 15% and the city pills at 75%. A higher background percentage makes the glass whiter and less see-through."
+            android:textColor="@color/muted"
+            android:textSize="12sp" />
+
         <include
             layout="@layout/view_look"
             android:layout_width="match_parent"

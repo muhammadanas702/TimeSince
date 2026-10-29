@@ -76,6 +76,13 @@ class LookPanel(
         onChange()
     }
 
+    /** Replaces the whole look at once, for a "reset" button. */
+    fun setLook(newLook: Look) {
+        look = newLook
+        seek.progress = newLook.opacity
+        changed()
+    }
+
     private fun choosePreset(index: Int) {
         val p = presets[index]
         look = look.copy(theme = index, bg = p.bg, fg = p.fg, accent = p.accent)

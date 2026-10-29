@@ -64,24 +64,6 @@ object ExtraStore {
 
     private fun prefs(c: Context) = c.getSharedPreferences(FILE, Context.MODE_PRIVATE)
 
-    /** The Glass look of version 2.3 (white at 25%). Kept only to recognise and upgrade it. */
-    private val OLD_GLASS = Look(
-        theme = 0,
-        bg = 0xFFFFFFFF.toInt(),
-        fg = 0xFFFFFFFF.toInt(),
-        accent = 0xFFF5CC00.toInt(),
-        opacity = 25
-    )
-
-    /** The Glass look of versions 2.4 and 2.5 (white at 12%, accent F5CC00). Upgraded to the reference look. */
-    private val OLD_GLASS_V24 = Look(
-        theme = 0,
-        bg = 0xFFFFFFFF.toInt(),
-        fg = 0xFFFFFFFF.toInt(),
-        accent = 0xFFF5CC00.toInt(),
-        opacity = 12
-    )
-
     private fun readLook(p: SharedPreferences, prefix: String, id: Int, base: Look = Look()): Look {
         return Look(
             theme = p.getInt("${prefix}_theme_$id", base.theme),
@@ -122,29 +104,27 @@ object ExtraStore {
         val base = WorldCfg()
         val raw = p.getString("world_zones_$id", null)
         val saved = if (raw.isNullOrEmpty()) emptyList() else parseZones(raw)
-        // The look is stored under "world2": the redesigned widget starts from the Glass look,
+        // The look is stored under "world3": every widget starts again from the reference look (Glass, 15%),
         // while the cities and the 12/24 hour choice of older widgets are kept.
-        var look = readLook(p, "world2", id, base.look)
-        // Widgets still on the first Glass look (25% white) move to the more transparent default.
-        if (look == OLD_GLASS || look == OLD_GLASS_V24) look = base.look
+        val look = readLook(p, "world3", id, base.look)
         return WorldCfg(
             look = look,
             zones = saved.ifEmpty { base.zones }.take(WorldCfg.MAX_CITIES),
             h24 = p.getBoolean("world_h24_$id", false),
             shortNames = p.getBoolean("world_short_$id", true),
-            pillOpacity = p.getInt("world_pill_$id", base.pillOpacity).coerceIn(0, 100),
-            textScale = p.getInt("world_text_$id", base.textScale).coerceIn(70, 130)
+            pillOpacity = p.getInt("world_pill3_$id", base.pillOpacity).coerceIn(0, 100),
+            textScale = p.getInt("world_text3_$id", base.textScale).coerceIn(70, 130)
         )
     }
 
     fun writeWorld(c: Context, id: Int, cfg: WorldCfg) {
         val e = prefs(c).edit()
-        writeLook(e, "world2", id, cfg.look)
+        writeLook(e, "world3", id, cfg.look)
         e.putString("world_zones_$id", cfg.zones.joinToString(";") { it.name + "|" + it.id })
         e.putBoolean("world_h24_$id", cfg.h24)
         e.putBoolean("world_short_$id", cfg.shortNames)
-        e.putInt("world_pill_$id", cfg.pillOpacity)
-        e.putInt("world_text_$id", cfg.textScale)
+        e.putInt("world_pill3_$id", cfg.pillOpacity)
+        e.putInt("world_text3_$id", cfg.textScale)
         e.apply()
     }
 
