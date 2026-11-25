@@ -189,20 +189,20 @@ class MainActivity : Activity() {
         }
         Thread {
             var release: Updater.Release? = null
-            var failed = false
+            var problem: String? = null
             try {
                 release = Updater.fetchLatest()
             } catch (e: Exception) {
-                failed = true
+                problem = Updater.explain(e)
             }
             val found = release
-            val offline = failed
+            val failure = problem
             runOnUiThread {
                 checking = false
                 if (isDestroyed) return@runOnUiThread
                 btnCheck.isEnabled = true
-                if (offline) {
-                    if (manual) tvStatus.text = "Could not check for updates. Is the internet on?"
+                if (failure != null) {
+                    if (manual) tvStatus.text = "Could not check for updates (" + failure + "). Try again later."
                     return@runOnUiThread
                 }
                 val e = updatePrefs().edit().putLong("checked", System.currentTimeMillis())
@@ -255,7 +255,7 @@ class MainActivity : Activity() {
                     runOnUiThread { if (!isDestroyed) showProgress(percent) }
                 }
             } catch (e: Exception) {
-                problem = e.message ?: "unknown error"
+                problem = Updater.explain(e)
             }
             val failure = problem
             downloading = false
@@ -268,7 +268,7 @@ class MainActivity : Activity() {
                     upSub.text = "Downloaded. Confirm Android's question to finish installing."
                 } else {
                     upButton.text = "Try again"
-                    upSub.text = "The download did not work (" + failure + "). Check the internet and try again."
+                    upSub.text = "The download did not work (" + failure + "). Tap Try again."
                 }
             }
         }.start()

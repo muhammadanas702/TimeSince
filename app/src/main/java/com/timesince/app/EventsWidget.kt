@@ -42,6 +42,7 @@ class EventsWidget : AppWidgetProvider() {
         when (intent.action) {
             ACTION_TICK,
             Intent.ACTION_BOOT_COMPLETED,
+            Intent.ACTION_MY_PACKAGE_REPLACED,
             Intent.ACTION_TIME_CHANGED,
             Intent.ACTION_TIMEZONE_CHANGED -> updateAll(context)
         }

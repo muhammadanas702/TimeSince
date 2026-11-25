@@ -194,7 +194,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-        android:visibility="gone">
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/e4_name"

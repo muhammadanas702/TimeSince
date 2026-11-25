@@ -38,6 +38,7 @@ class TimeSinceWidget : AppWidgetProvider() {
         when (intent.action) {
             ACTION_REFRESH,
             Intent.ACTION_BOOT_COMPLETED,
+            Intent.ACTION_MY_PACKAGE_REPLACED,
             Intent.ACTION_TIME_CHANGED,
             Intent.ACTION_TIMEZONE_CHANGED -> updateAll(context)
         }
@@ -62,7 +63,12 @@ class TimeSinceWidget : AppWidgetProvider() {
         private val DATE_FMT = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.ENGLISH)
         private val TIME_FMT = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH)
 
-        fun updateAll(context: Context) {
+        /**
+         * Redraws every Time Since widget. With [alerts] it also sends the alerts that are due and puts the
+         * alarm for the next one back in place, so a widget that updates always keeps its alert alive.
+         */
+        fun updateAll(context: Context, alerts: Boolean = true) {
+            if (alerts) EventAlerts.process(context)
             val manager = AppWidgetManager.getInstance(context)
             val ids = manager.getAppWidgetIds(ComponentName(context, TimeSinceWidget::class.java))
             if (ids.isEmpty()) {

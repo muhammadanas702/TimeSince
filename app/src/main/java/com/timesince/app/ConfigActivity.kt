@@ -243,8 +243,9 @@ class ConfigActivity : Activity() {
         Store.write(this, Store.PREVIEW_ID, cfg)
         // Alerts count from now on, so a date that is already past does not alert at once.
         ExtraStore.setAlertCursor(this, widgetId, System.currentTimeMillis())
-        EventAlerts.process(this)
+        // Redraws the widgets and sets the alarm for the next alert (the cursor above keeps past dates quiet).
         TimeSinceWidget.updateAll(this)
+        if (cfg.alert != EventAlerts.MODE_OFF) EventAlerts.warnIfBlocked(this)
         setResult(RESULT_OK, Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId))
         finish()
     }

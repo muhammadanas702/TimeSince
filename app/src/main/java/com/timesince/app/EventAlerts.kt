@@ -15,6 +15,8 @@ import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.os.Build
+import android.util.Log
+import android.widget.Toast
 import java.time.LocalDateTime
 import java.time.ZoneId
 
@@ -89,19 +91,46 @@ object EventAlerts {
         schedule(context, if (next == Long.MAX_VALUE) null else next)
     }
 
-    /** Android 13 and newer ask before an app may show notifications. */
-    fun notificationsAllowed(context: Context): Boolean =
-        Build.VERSION.SDK_INT < 33 ||
+    /**
+     * True when this app may show notifications. Android 13 and newer ask first, and on every version the
+     * user can switch an app's notifications off in the phone's settings.
+     */
+    fun notificationsAllowed(context: Context): Boolean {
+        val granted = Build.VERSION.SDK_INT < 33 ||
             context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+        val nm = context.getSystemService(NotificationManager::class.java)
+        return granted && nm.areNotificationsEnabled()
+    }
+
+    /** Tells the user, when saving a widget that has an alert, that the alert cannot show while notifications are off. */
+    fun warnIfBlocked(context: Context) {
+        if (notificationsAllowed(context)) return
+        Toast.makeText(
+            context,
+            "Notifications are off for Time Since, so alerts will not show. Turn them on in the phone's app settings.",
+            Toast.LENGTH_LONG
+        ).show()
+    }
 
     fun askNotificationPermission(activity: Activity) {
-        if (!notificationsAllowed(activity)) {
+        if (Build.VERSION.SDK_INT >= 33 &&
+            activity.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) {
             activity.requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
         }
     }
 
     /** Shows one alert right now. The settings screen uses it for the test button. */
     fun post(context: Context, title: String, mode: Int, text: String) {
+        try {
+            show(context, title, mode, text)
+        } catch (e: RuntimeException) {
+            // For example a phone that refuses the notification: the widgets must keep working.
+            Log.w("TimeSince", "Could not show the alert", e)
+        }
+    }
+
+    private fun show(context: Context, title: String, mode: Int, text: String) {
         val nm = context.getSystemService(NotificationManager::class.java)
         createChannels(nm)
 

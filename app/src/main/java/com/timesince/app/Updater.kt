@@ -9,8 +9,12 @@ import android.os.Build
 import android.provider.Settings
 import org.json.JSONObject
 import java.io.IOException
+import java.net.ConnectException
 import java.net.HttpURLConnection
+import java.net.NoRouteToHostException
+import java.net.SocketTimeoutException
 import java.net.URL
+import java.net.UnknownHostException
 
 /**
  * Updates the app from its own GitHub Releases page.
@@ -86,6 +90,13 @@ object Updater {
         } finally {
             conn.disconnect()
         }
+    }
+
+    /** A short reason for a failed check or download, for the screen: "no internet connection", "GitHub answered 403". */
+    fun explain(e: Exception): String = when (e) {
+        is UnknownHostException, is ConnectException, is SocketTimeoutException, is NoRouteToHostException ->
+            "no internet connection"
+        else -> e.message?.takeIf { it.isNotBlank() } ?: "unknown error"
     }
 
     /** Android 8 and newer let the user allow each app to install apps ("Install unknown apps"). */

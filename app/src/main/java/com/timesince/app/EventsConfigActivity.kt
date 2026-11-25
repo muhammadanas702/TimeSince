@@ -1,14 +1,11 @@
 package com.timesince.app
 
-import android.Manifest
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.appwidget.AppWidgetManager
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -149,8 +146,10 @@ class EventsConfigActivity : Activity() {
     }
 
     private fun save() {
-        ExtraStore.writeEvents(this, widgetId, currentConfig())
+        val cfg = currentConfig()
+        ExtraStore.writeEvents(this, widgetId, cfg)
         EventsWidget.updateAll(this)
+        if (cfg.events.any { it.alert != EventAlerts.MODE_OFF }) EventAlerts.warnIfBlocked(this)
         setResult(RESULT_OK, Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId))
         finish()
     }
@@ -237,7 +236,11 @@ class EventsConfigActivity : Activity() {
     private fun sendTestAlert() {
         if (!notificationsAllowed()) {
             askNotificationPermission()
-            Toast.makeText(this, "Allow notifications, then tap the test again.", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this,
+                "Allow notifications for Time Since (in the box that appears, or in the phone's app settings), then tap the test again.",
+                Toast.LENGTH_LONG
+            ).show()
             return
         }
         val strongest = slots.maxOfOrNull { it.alert } ?: EventAlerts.MODE_OFF
@@ -245,16 +248,10 @@ class EventsConfigActivity : Activity() {
         EventAlerts.post(this, "Test alert", mode, "This is how an alert from your Event Countdown looks and sounds.")
     }
 
-    private fun notificationsAllowed(): Boolean =
-        Build.VERSION.SDK_INT < 33 ||
-            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+    private fun notificationsAllowed(): Boolean = EventAlerts.notificationsAllowed(this)
 
     /** Android 13 and newer ask before an app may show notifications. */
-    private fun askNotificationPermission() {
-        if (!notificationsAllowed()) {
-            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
-        }
-    }
+    private fun askNotificationPermission() = EventAlerts.askNotificationPermission(this)
 
     companion object {
         private const val MAX_EVENTS = 4

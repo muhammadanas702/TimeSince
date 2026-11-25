@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Static sample of the solid yellow clock pill, for the widget picker. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#F5CA01" />
+    <corners android:radius="100dp" />
+</shape>

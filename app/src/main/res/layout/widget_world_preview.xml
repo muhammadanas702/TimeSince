@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- What the widget picker (and the moment before the first update) shows for the World clock: a fixed sample
+     with two cities. The live widget is widget_world.xml, drawn by WorldClockWidget. Sizes are in dp for the
+     same reason as in the widget: they must not follow the phone's font-size setting. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/world_preview_bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="11dp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/world_preview_pill_yellow">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="10 : 30"
+                android:textColor="#000000"
+                android:textSize="23.5dp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:paddingTop="10dp"
+            android:paddingBottom="6dp"
+            android:text="Mon, 2026, Oct 26,AM"
+            android:textColor="#9EFFFFFF"
+            android:textSize="17dp" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/world_preview_pill_dark">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:layout_marginStart="27dp"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="LON"
+                android:textColor="#FFFFFF"
+                android:textSize="13.5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="40dp"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="05:30 AM"
+                android:textColor="#FFFFFF"
+                android:textSize="13.5dp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/world_preview_pill_dark">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:layout_marginStart="27dp"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="NEW"
+                android:textColor="#FFFFFF"
+                android:textSize="13.5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="40dp"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="12:30 AM"
+                android:textColor="#FFFFFF"
+                android:textSize="13.5dp" />
+        </FrameLayout>
+    </LinearLayout>
+</FrameLayout>

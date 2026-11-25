@@ -109,7 +109,12 @@
             android:text="Alert when the date arrives: Off"
             android:textAllCaps="false"
             android:textColor="@color/fg"
-            android:textSize="15sp" />
+            android:maxLines="1"
+            android:paddingHorizontal="8dp"
+            android:autoSizeMaxTextSize="15sp"
+            android:autoSizeMinTextSize="11sp"
+            android:autoSizeStepGranularity="1sp"
+            android:autoSizeTextType="uniform" />
 
         <TextView
             android:layout_width="match_parent"

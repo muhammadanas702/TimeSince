@@ -209,7 +209,13 @@ object ExtraStore {
 
     private fun parseZones(raw: String): List<Zone> = raw.split(";").mapNotNull {
         val parts = it.split("|")
-        if (parts.size == 2 && parts[0].isNotEmpty()) Zone(parts[0], parts[1]) else null
+        // Only the name and the time zone are saved; the country comes back from the city list.
+        if (parts.size == 2 && parts[0].isNotEmpty()) {
+            val known = Cities.ALL.firstOrNull { z -> z.name == parts[0] && z.id == parts[1] }
+            Zone(parts[0], parts[1], known?.country ?: "")
+        } else {
+            null
+        }
     }
 
     /** Forgets every setting of a widget that was removed from the home screen. */

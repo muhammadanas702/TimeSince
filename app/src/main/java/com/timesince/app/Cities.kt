@@ -121,9 +121,19 @@ object Cities {
 
     fun byName(name: String): Zone = ALL.first { it.name == name }
 
+    /** Cities whose first three letters are also the start of another city: they get their own code. */
+    private val SHORT_CODES = mapOf(
+        "Dublin" to "DBL",        // Dubai keeps DUB
+        "Manama" to "MNM",        // Manila keeps MAN
+        "Beirut" to "BEY",        // Beijing keeps BEI
+        "Honolulu" to "HNL",      // Hong Kong keeps HON
+        "San Francisco" to "SFO"  // Santiago keeps SAN
+    )
+
     /** The three-letter label of the sample design: LON, NEW, SEO. */
     fun shortName(zone: Zone): String {
         if (zone.id.isEmpty()) return "LOCAL"
-        return zone.name.filter { it.isLetter() }.take(3).uppercase(Locale.ENGLISH)
+        return SHORT_CODES[zone.name]
+            ?: zone.name.filter { it.isLetter() }.take(3).uppercase(Locale.ENGLISH)
     }
 }
