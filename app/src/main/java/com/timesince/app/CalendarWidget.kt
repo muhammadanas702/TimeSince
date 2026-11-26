@@ -80,7 +80,14 @@ class CalendarWidget : AppWidgetProvider() {
                 return
             }
             for (id in ids) {
-                manager.updateAppWidget(id, build(context, id, ExtraStore.readCalendar(context, id), false))
+                manager.updateAppWidget(
+                    id,
+                    if (ExtraStore.isRemoved(context, id)) {
+                        RemovedWidget.build(context, id, CalendarConfigActivity::class.java)
+                    } else {
+                        build(context, id, ExtraStore.readCalendar(context, id), false)
+                    }
+                )
             }
             DailyTick.schedule(context, CalendarWidget::class.java, ACTION_TICK)
         }

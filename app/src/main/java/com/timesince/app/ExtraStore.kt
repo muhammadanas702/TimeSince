@@ -20,7 +20,9 @@ data class EventItem(
 data class EventsCfg(
     val look: Look = Look(),
     val events: List<EventItem> = emptyList(),
-    val notifyMinutes: Int = 540
+    val notifyMinutes: Int = 540,
+    /** The name of the widget (for example "Mid exam dates"), shown above the events. Empty = no heading. */
+    val title: String = ""
 )
 
 /** [offset] is the month being shown, counted from the current month (0 = this month). */
@@ -96,6 +98,7 @@ object ExtraStore {
         writeLook(e, "clock", id, cfg.look)
         e.putBoolean("clock_h24_$id", cfg.h24)
         e.putBoolean("clock_sec_$id", cfg.seconds)
+        e.remove("removed_$id")
         e.apply()
     }
 
@@ -125,6 +128,7 @@ object ExtraStore {
         e.putBoolean("world_short_$id", cfg.shortNames)
         e.putInt("world_pill3_$id", cfg.pillOpacity)
         e.putInt("world_text3_$id", cfg.textScale)
+        e.remove("removed_$id")
         e.apply()
     }
 
@@ -143,6 +147,7 @@ object ExtraStore {
         writeLook(e, "cal", id, cfg.look)
         e.putBoolean("cal_monday_$id", cfg.mondayFirst)
         e.putInt("cal_offset_$id", 0)
+        e.remove("removed_$id")
         e.apply()
     }
 
@@ -157,7 +162,8 @@ object ExtraStore {
         return EventsCfg(
             look = readLook(p, "events", id),
             events = if (raw.isNullOrEmpty()) emptyList() else parseEvents(raw),
-            notifyMinutes = p.getInt("events_notify_$id", 540).coerceIn(0, 1439)
+            notifyMinutes = p.getInt("events_notify_$id", 540).coerceIn(0, 1439),
+            title = p.getString("events_title_$id", "") ?: ""
         )
     }
 
@@ -189,7 +195,9 @@ object ExtraStore {
         }
         e.putString("events_list_$id", text)
         e.putInt("events_notify_$id", cfg.notifyMinutes)
+        e.putString("events_title_$id", cfg.title.replace('\n', ' ').trim())
         e.putLong("events_cursor_$id", System.currentTimeMillis())
+        e.remove("removed_$id")
         e.apply()
     }
 
@@ -216,6 +224,19 @@ object ExtraStore {
         } else {
             null
         }
+    }
+
+    /**
+     * A widget the user deleted in the app. Android does not let an app take a widget off the home screen,
+     * so such a widget stays there as a small "Deleted" tile (see [RemovedWidget]) until the user removes it.
+     * Saving the settings of the widget again clears the mark.
+     */
+    fun isRemoved(c: Context, id: Int): Boolean = prefs(c).getBoolean("removed_$id", false)
+
+    fun setRemoved(c: Context, id: Int, removed: Boolean) {
+        val e = prefs(c).edit()
+        if (removed) e.putBoolean("removed_$id", true) else e.remove("removed_$id")
+        e.apply()
     }
 
     /** Forgets every setting of a widget that was removed from the home screen. */

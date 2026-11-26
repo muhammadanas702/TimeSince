@@ -1,6 +1,7 @@
 package com.timesince.app
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
@@ -303,7 +304,7 @@ class MainActivity : Activity() {
         }
     }
 
-    /** Every widget on the home screen, of every kind. Tapping a row opens that widget's settings. */
+    /** Every widget on the home screen, of every kind, with Edit and Delete. Tapping a row also opens its settings. */
     private fun renderList() {
         val manager = AppWidgetManager.getInstance(this)
         list.removeAllViews()
@@ -313,6 +314,8 @@ class MainActivity : Activity() {
         for (kind in kinds) {
             val ids = manager.getAppWidgetIds(ComponentName(this, kind.receiver))
             for (id in ids) {
+                // A widget deleted here stays on the home screen as a tile until the user removes it.
+                if (ExtraStore.isRemoved(this, id)) continue
                 count++
                 val info = kind.describe(id)
                 val row = inflater.inflate(R.layout.item_widget, list, false)
@@ -325,16 +328,47 @@ class MainActivity : Activity() {
                 dot.setColor(info.color)
                 row.findViewById<View>(R.id.it_dot).background = dot
 
-                row.setOnClickListener {
+                val edit = View.OnClickListener {
                     startActivity(
                         Intent(this, kind.config)
                             .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id)
                     )
                 }
+                row.setOnClickListener(edit)
+                row.findViewById<Button>(R.id.it_edit).setOnClickListener(edit)
+                row.findViewById<Button>(R.id.it_delete).setOnClickListener { confirmDelete(kind, id, info.title) }
                 list.addView(row)
             }
         }
         empty.visibility = if (count == 0) View.VISIBLE else View.GONE
+    }
+
+    private fun confirmDelete(kind: WidgetKind, id: Int, name: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Delete this widget?")
+            .setMessage(
+                name + "\n\nIts settings and alerts are erased. Android does not let an app take a widget " +
+                    "off your home screen, so it stays there as a small \"Deleted\" tile. Press and hold the " +
+                    "tile, then tap Remove, to clear it away."
+            )
+            .setPositiveButton("Delete") { _, _ -> deleteWidget(kind, id) }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    /** Erases the settings and alerts of one widget and turns it into the "Deleted" tile. */
+    private fun deleteWidget(kind: WidgetKind, id: Int) {
+        Store.remove(this, id)
+        ExtraStore.remove(this, id)
+        ExtraStore.setRemoved(this, id, true)
+        AppWidgetManager.getInstance(this).updateAppWidget(id, RemovedWidget.build(this, id, kind.config))
+        EventAlerts.process(this) // its alerts stop
+        Toast.makeText(
+            this,
+            "Widget deleted. On the home screen, press and hold its tile and tap Remove to clear it.",
+            Toast.LENGTH_LONG
+        ).show()
+        renderList()
     }
 
     private fun describeSince(id: Int): ListInfo {
@@ -372,7 +406,7 @@ class MainActivity : Activity() {
             n.toString() + (if (n == 1) " event" else " events") + " · " +
                 next.item.name + ": " + EventMath.label(next)
         }
-        return ListInfo("Event Countdown", sub, cfg.look.accent)
+        return ListInfo(cfg.title.ifBlank { "Event Countdown" }, sub, cfg.look.accent)
     }
 
     private fun describeCalendar(id: Int): ListInfo {

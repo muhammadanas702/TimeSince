@@ -15,7 +15,7 @@ An Android home-screen widget that shows how much time has passed since a date y
 - Pick a date in the future and it becomes a countdown. Set **Alert when the date arrives** to *Notification* or *Ringtone* and the app tells you the moment the countdown reaches zero (same alert system as the Event Countdown, see below).
 - Dark app, English text, no ads, no extra libraries. The internet permission is used for one thing only: looking for a newer version of the app on GitHub (see *Updating inside the app*).
 
-## More widgets (version 3.2)
+## More widgets (version 3.3)
 
 The app adds five widgets to the launcher's widget list. The app's home screen has an **Add** button for each one and lists every widget you have placed, whatever its type. Each widget keeps its own settings, and tapping it (on the home screen or in the list) reopens them.
 
@@ -26,6 +26,11 @@ The app adds five widgets to the launcher's widget list. The app's home screen h
 - **Month Calendar**: the month at a glance with today circled in the accent color. The arrows on the widget move to the previous or next month, tapping the month name jumps back to this month, and tapping anywhere else opens the settings. Choose whether the week starts on Monday or Sunday.
 
 The clock widgets use `TextClock`, which the launcher keeps ticking by itself, so they need no alarms or background work. The Event Countdown only changes at midnight, so it uses one alarm shortly after midnight (and also redraws on boot and when the date or time zone changes). Event alerts use one more alarm, set for the next alert (or the next change of the countdown text) of all your Event widgets; when it fires the app sends what is due, redraws the widgets and sets the alarm for the one after. On some phones (for example with aggressive battery managers) you must also allow the app to auto-start or run in the background, or Android may drop the alarm.
+
+## New in version 3.3
+
+- **Edit and Delete in the app.** Every widget in the *Your widgets* list on the home screen of the app has an **Edit** and a **Delete** button. Delete asks first, then erases the settings and the alerts of that widget and takes it out of the list. **Android does not let an app remove a widget from the home screen** (only the home screen app can, when you press and hold the widget and tap Remove), so the widget stays there as a small dashed tile that says *Deleted*. Press and hold the tile and tap Remove to clear it away. If you tap the tile instead, the settings open again and saving brings the widget back.
+- **Name for an Event Countdown widget.** The settings have a *Widget name* box (for example `Mid exam dates`). The name is shown as a small heading above the events and as the title of the widget in the app's list.
 
 ## Fixes in version 3.2
 
@@ -117,6 +122,7 @@ app/src/main/java/com/timesince/app/
   EventMath.kt        days left, yearly repeat, ordering of events, alert times
   EventAlerts.kt      notifications and the alarm for Event Countdown alerts
   EventAlarmReceiver.kt  receives that alarm
+  RemovedWidget.kt    the "Deleted" tile a widget turns into after Delete in the app
   CalendarWidget.kt, CalendarConfigActivity.kt        Month Calendar widget and its settings
   CalendarMath.kt     the 6x7 month grid; CalendarIds.kt holds the generated view ids
   DailyTick.kt        the after-midnight alarm used by date-based widgets

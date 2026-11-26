@@ -22,6 +22,22 @@
         android:paddingHorizontal="16dp"
         android:paddingVertical="8dp">
 
+        <!-- The name of the widget, for example "Mid exam dates". Hidden when it has no name. -->
+        <TextView
+            android:id="@+id/e_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:letterSpacing="0.08"
+            android:maxLines="1"
+            android:paddingBottom="2dp"
+            android:text=""
+            android:textAllCaps="true"
+            android:textColor="@color/accent"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
         <LinearLayout
             android:id="@+id/e1_row"
             android:layout_width="match_parent"

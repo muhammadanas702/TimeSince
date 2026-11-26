@@ -23,7 +23,7 @@ private val EVENT_ROWS = listOf(
 )
 
 /**
- * Event countdown: up to four named dates (with an optional time) in one widget, each with the time left.
+ * Event countdown: up to four named dates (with an optional heading, the name of the widget) (with an optional time) in one widget, each with the time left.
  * Events without a time only change at midnight. Events with a time show whole hours until a day is left,
  * then a live ticking countdown; the alarm of [EventAlerts] redraws the widget when the text must change.
  */
@@ -74,7 +74,14 @@ class EventsWidget : AppWidgetProvider() {
                 return
             }
             for (id in ids) {
-                manager.updateAppWidget(id, build(context, id, ExtraStore.readEvents(context, id), false))
+                manager.updateAppWidget(
+                    id,
+                    if (ExtraStore.isRemoved(context, id)) {
+                        RemovedWidget.build(context, id, EventsConfigActivity::class.java)
+                    } else {
+                        build(context, id, ExtraStore.readEvents(context, id), false)
+                    }
+                )
             }
             DailyTick.schedule(context, EventsWidget::class.java, ACTION_TICK)
         }
@@ -88,6 +95,11 @@ class EventsWidget : AppWidgetProvider() {
             val muted = LookUtil.muted(look.fg)
             val now = LocalDateTime.now()
             val items = EventMath.order(cfg.events, now).take(EVENT_ROWS.size)
+
+            val title = cfg.title.trim()
+            views.setViewVisibility(R.id.e_title, if (title.isEmpty()) View.GONE else View.VISIBLE)
+            views.setTextViewText(R.id.e_title, title)
+            views.setTextColor(R.id.e_title, look.accent)
 
             EVENT_ROWS.forEachIndexed { i, r ->
                 views.setViewVisibility(r.chrono, View.GONE)

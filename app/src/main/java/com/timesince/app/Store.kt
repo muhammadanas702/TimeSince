@@ -59,6 +59,7 @@ object Store {
             .putInt("opacity_$id", cfg.opacity)
             .putInt("alert_$id", cfg.alert)
             .apply()
+        if (id != PREVIEW_ID) ExtraStore.setRemoved(c, id, false)
     }
 
     fun remove(c: Context, id: Int) {

@@ -37,8 +37,34 @@
             <FrameLayout
                 android:id="@+id/preview_host"
                 android:layout_width="match_parent"
-                android:layout_height="150dp" />
+                android:layout_height="165dp" />
         </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:letterSpacing="0.16"
+            android:text="Widget name"
+            android:textAllCaps="true"
+            android:textColor="@color/muted"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/et_widget_title"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_field"
+            android:hint="Optional, e.g. Mid exam dates"
+            android:imeOptions="actionDone"
+            android:inputType="textCapWords"
+            android:maxLength="30"
+            android:maxLines="1"
+            android:paddingHorizontal="14dp"
+            android:textColor="@color/fg"
+            android:textColorHint="@color/muted"
+            android:textSize="16sp" />
 
         <TextView
             android:layout_width="wrap_content"

@@ -47,6 +47,7 @@ class EventsConfigActivity : Activity() {
     private lateinit var panel: LookPanel
     private lateinit var host: FrameLayout
     private lateinit var btnTime: Button
+    private lateinit var etTitle: EditText
     private var previewView: View? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,6 +68,7 @@ class EventsConfigActivity : Activity() {
 
         host = findViewById(R.id.preview_host)
         btnTime = findViewById(R.id.btn_notify_time)
+        etTitle = findViewById(R.id.et_widget_title)
         val container = findViewById<LinearLayout>(R.id.events_container)
         val cfg = ExtraStore.readEvents(this, widgetId)
         notifyMinutes = cfg.notifyMinutes
@@ -124,6 +126,15 @@ class EventsConfigActivity : Activity() {
             slots.add(slot)
         }
 
+        etTitle.setText(cfg.title)
+        etTitle.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                renderPreview()
+            }
+        })
+
         panel = LookPanel(this, findViewById<View>(android.R.id.content), cfg.look) { renderPreview() }
 
         btnTime.setOnClickListener { pickAlertTime() }
@@ -142,7 +153,12 @@ class EventsConfigActivity : Activity() {
             val name = slot.name.text.toString().trim().ifEmpty { "Event" }
             events.add(EventItem(name, date, slot.yearly.isChecked, slot.alert, slot.minutes))
         }
-        return EventsCfg(look = panel.look, events = events, notifyMinutes = notifyMinutes)
+        return EventsCfg(
+            look = panel.look,
+            events = events,
+            notifyMinutes = notifyMinutes,
+            title = etTitle.text.toString().trim()
+        )
     }
 
     private fun save() {

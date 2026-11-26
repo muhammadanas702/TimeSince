@@ -60,7 +60,14 @@ class WorldClockWidget : AppWidgetProvider() {
             val manager = AppWidgetManager.getInstance(context)
             val ids = manager.getAppWidgetIds(ComponentName(context, WorldClockWidget::class.java))
             for (id in ids) {
-                manager.updateAppWidget(id, build(context, id, ExtraStore.readWorld(context, id), false))
+                manager.updateAppWidget(
+                    id,
+                    if (ExtraStore.isRemoved(context, id)) {
+                        RemovedWidget.build(context, id, WorldClockConfigActivity::class.java)
+                    } else {
+                        build(context, id, ExtraStore.readWorld(context, id), false)
+                    }
+                )
             }
         }
 

@@ -77,6 +77,10 @@ class TimeSinceWidget : AppWidgetProvider() {
             }
             var nextDelay = Long.MAX_VALUE
             for (id in ids) {
+                if (ExtraStore.isRemoved(context, id)) {
+                    manager.updateAppWidget(id, RemovedWidget.build(context, id, ConfigActivity::class.java))
+                    continue
+                }
                 val cfg = Store.forWidget(context, id)
                 val (views, delay) = build(context, id, cfg, false)
                 manager.updateAppWidget(id, views)
