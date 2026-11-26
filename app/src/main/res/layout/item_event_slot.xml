@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- One event in the Event countdown settings: name, date, "every year", remove, time and alert. -->
+<!-- One event in the Event countdown settings: name, date, "every year", remove, time, alert and,
+     once an alert is chosen, how long before the event it goes off. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -117,4 +118,22 @@
             android:autoSizeStepGranularity="1sp"
             android:autoSizeTextType="uniform" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/ev_lead"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_marginTop="8dp"
+        android:autoSizeMaxTextSize="15sp"
+        android:autoSizeMinTextSize="11sp"
+        android:autoSizeStepGranularity="1sp"
+        android:autoSizeTextType="uniform"
+        android:background="@drawable/bg_button_outline"
+        android:maxLines="1"
+        android:paddingHorizontal="12dp"
+        android:stateListAnimator="@null"
+        android:text="Remind me: at the time"
+        android:textAllCaps="false"
+        android:textColor="@color/fg"
+        android:visibility="gone" />
 </LinearLayout>

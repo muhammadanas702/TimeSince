@@ -104,27 +104,37 @@ object EventMath {
         return if (best == Long.MAX_VALUE) null else best
     }
 
-    /** The moment an alert goes off on [date], [minutes] after midnight, in the phone's time zone. */
-    private fun triggerMillis(date: LocalDate, minutes: Int): Long =
+    /**
+     * The moment an alert goes off for the event on [date] at [minutes] after midnight, [lead] minutes
+     * earlier, in the phone's time zone. The subtraction is done on the clock (not on elapsed time), so
+     * "1 day before at 9:00 AM" stays 9:00 AM even when the clocks change in between.
+     */
+    private fun triggerMillis(date: LocalDate, minutes: Int, lead: Int): Long =
         date.atTime(minutes / 60, minutes % 60)
+            .minusMinutes(lead.toLong())
             .atZone(ZoneId.systemDefault())
             .toInstant()
             .toEpochMilli()
 
-    /** Every alert moment of the event after [from] and up to [to] (both in epoch milliseconds). */
+    /**
+     * Every alert moment of the event after [from] and up to [to] (both in epoch milliseconds).
+     * [minutes] is the time of the event, or the widget's all-day alert time for an event without one.
+     * The alert comes [EventItem.lead] minutes before it.
+     */
     fun triggersBetween(item: EventItem, minutes: Int, from: Long, to: Long): List<Long> {
         if (to <= from) return emptyList()
         val found = ArrayList<Long>()
         if (!item.yearly) {
-            val t = triggerMillis(item.date, minutes)
+            val t = triggerMillis(item.date, minutes, item.lead)
             if (t > from && t <= to) found.add(t)
         } else {
             val zone = ZoneId.systemDefault()
             val first = Instant.ofEpochMilli(from).atZone(zone).year
-            val last = Instant.ofEpochMilli(to).atZone(zone).year
+            // An alert in the last days of a year can belong to an event in the next year.
+            val last = Instant.ofEpochMilli(to).atZone(zone).year + 1
             val md = MonthDay.of(item.date.month, item.date.dayOfMonth)
             for (year in first..last) {
-                val t = triggerMillis(md.atYear(year), minutes)
+                val t = triggerMillis(md.atYear(year), minutes, item.lead)
                 if (t > from && t <= to) found.add(t)
             }
         }
@@ -134,13 +144,13 @@ object EventMath {
     /** The first alert moment of the event after [after], or null when it has none left. */
     fun nextTrigger(item: EventItem, minutes: Int, after: Long): Long? {
         if (!item.yearly) {
-            val t = triggerMillis(item.date, minutes)
+            val t = triggerMillis(item.date, minutes, item.lead)
             return if (t > after) t else null
         }
         val year = Instant.ofEpochMilli(after).atZone(ZoneId.systemDefault()).year
         val md = MonthDay.of(item.date.month, item.date.dayOfMonth)
-        for (y in year..year + 1) {
-            val t = triggerMillis(md.atYear(y), minutes)
+        for (y in year..year + 2) {
+            val t = triggerMillis(md.atYear(y), minutes, item.lead)
             if (t > after) return t
         }
         return null

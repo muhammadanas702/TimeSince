@@ -160,11 +160,35 @@
             android:textSize="15sp"
             android:textStyle="bold" />
 
+        <Button
+            android:id="@+id/btn_sound"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_button_outline"
+            android:stateListAnimator="@null"
+            android:text="Choose the alert sound"
+            android:textAllCaps="false"
+            android:textColor="@color/fg"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/btn_background"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_button_outline"
+            android:stateListAnimator="@null"
+            android:text="Allow alerts in the background"
+            android:textAllCaps="false"
+            android:textColor="@color/fg"
+            android:textSize="15sp" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:text="Give an event a Time to count down to the minute: under a day to go the widget ticks live, and the alert comes at that time. Events without a time count days and alert at the all-day alert time. Set Alert to Notification or Ringtone; a ringtone alert rings with your phone's ringtone until you tap or swipe it away (at most one minute). The alerts of a widget stop if you remove the widget. On some phones you also need to allow this app to run in the background (auto-start or battery settings)."
+            android:text="Give an event a Time to count down to the minute: under a day to go the widget ticks live, and the alert comes at that time. Events without a time count days and alert at the all-day alert time. Set Alert to Notification or Ringtone, then choose how long before the event it should go off: at the time, 10 minutes, 1 hour, 1 day, 1 week or a number of your own. A ringtone alert rings with your phone's ringtone until you tap, stop or swipe it away (at most one minute). Choose the alert sound opens the phone's own page where you pick the tone or ringtone. The alerts of a widget stop if you remove the widget. On some phones you also need to allow this app to run in the background (auto-start or battery settings)."
             android:textColor="@color/muted"
             android:textSize="12sp" />
 

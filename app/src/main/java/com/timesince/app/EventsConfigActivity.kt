@@ -1,6 +1,7 @@
 package com.timesince.app
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.appwidget.AppWidgetManager
@@ -8,6 +9,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Button
@@ -15,6 +17,8 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
@@ -25,8 +29,8 @@ import java.util.Locale
 
 /**
  * Settings for one Event countdown widget: a name for the widget, any number of events (up to [EventsWidget.MAX_EVENTS]),
- * each with a date, an optional time and an optional alert (notification or ringtone), how many events the widget
- * shows at once, the alert time for events without a time, colors and transparency.
+ * each with a date, an optional time and an optional alert (notification or ringtone, at the time or a while
+ * before), how many events the widget shows at once, the alert time for events without a time, colors and transparency.
  */
 class EventsConfigActivity : Activity() {
 
@@ -37,11 +41,14 @@ class EventsConfigActivity : Activity() {
         val dateButton: Button,
         val yearly: CheckBox,
         val timeButton: Button,
-        val alertButton: Button
+        val alertButton: Button,
+        val leadButton: Button
     ) {
         var value: LocalDate? = null
         var minutes = -1
         var alert = EventAlerts.MODE_OFF
+        /** Minutes before the event that the alert goes off; 0 = at the time. */
+        var lead = 0
     }
 
     private var widgetId = AppWidgetManager.INVALID_APPWIDGET_ID
@@ -112,6 +119,8 @@ class EventsConfigActivity : Activity() {
 
         btnTime.setOnClickListener { pickAlertTime() }
         findViewById<Button>(R.id.btn_test_alert).setOnClickListener { sendTestAlert() }
+        findViewById<Button>(R.id.btn_sound).setOnClickListener { chooseSound() }
+        findViewById<Button>(R.id.btn_background).setOnClickListener { EventAlerts.openBackgroundSettings(this) }
         findViewById<Button>(R.id.btn_save).setOnClickListener { save() }
 
         refreshTimeButton()
@@ -131,7 +140,8 @@ class EventsConfigActivity : Activity() {
             row.findViewById<Button>(R.id.ev_date),
             row.findViewById<CheckBox>(R.id.ev_yearly),
             row.findViewById<Button>(R.id.ev_time),
-            row.findViewById<Button>(R.id.ev_alert)
+            row.findViewById<Button>(R.id.ev_alert),
+            row.findViewById<Button>(R.id.ev_lead)
         )
         val remove = row.findViewById<Button>(R.id.ev_clear)
 
@@ -142,6 +152,7 @@ class EventsConfigActivity : Activity() {
             slot.yearly.isChecked = saved.yearly
             slot.alert = saved.alert
             slot.minutes = saved.minutes
+            slot.lead = saved.lead
         }
         slots.add(slot)
         refreshSlot(slot)
@@ -164,6 +175,7 @@ class EventsConfigActivity : Activity() {
             if (slot.alert != EventAlerts.MODE_OFF) askNotificationPermission()
             refreshSlot(slot)
         }
+        slot.leadButton.setOnClickListener { pickLead(slot) }
         remove.setOnClickListener {
             if (slots.size <= 1) {
                 // The last row stays, but empty, so there is always somewhere to type.
@@ -172,6 +184,7 @@ class EventsConfigActivity : Activity() {
                 slot.yearly.isChecked = false
                 slot.minutes = -1
                 slot.alert = EventAlerts.MODE_OFF
+                slot.lead = 0
                 refreshSlot(slot)
             } else {
                 container.removeView(slot.row)
@@ -219,7 +232,7 @@ class EventsConfigActivity : Activity() {
         for (slot in slots) {
             val date = slot.value ?: continue
             val name = slot.name.text.toString().trim().ifEmpty { "Event" }
-            events.add(EventItem(name, date, slot.yearly.isChecked, slot.alert, slot.minutes))
+            events.add(EventItem(name, date, slot.yearly.isChecked, slot.alert, slot.minutes, slot.lead))
         }
         return EventsCfg(
             look = panel.look,
@@ -332,6 +345,101 @@ class EventsConfigActivity : Activity() {
         slot.alertButton.text = "Alert: " + EventAlerts.modeLabel(slot.alert)
         slot.alertButton.setBackgroundResource(if (on) R.drawable.bg_button_primary else R.drawable.bg_button_outline)
         slot.alertButton.setTextColor(getColor(if (on) R.color.on_accent else R.color.fg))
+
+        // How long before the event the alert goes off: only asked once there is an alert.
+        slot.leadButton.visibility = if (on) View.VISIBLE else View.GONE
+        slot.leadButton.text = "Remind me: " + EventAlerts.leadLabel(slot.lead, timed)
+    }
+
+    /** The list of ready-made lead times, with "Custom" at the end for a number of minutes, hours, days or weeks. */
+    private fun pickLead(slot: Slot) {
+        val timed = slot.minutes >= 0
+        val labels = ArrayList<String>()
+        for (minutes in EventAlerts.LEAD_CHOICES) labels.add(EventAlerts.leadLabel(minutes, timed).replaceFirstChar { it.uppercase() })
+        labels.add("Custom…")
+        // A lead time that is not in the list was typed in as a custom one.
+        val listed = EventAlerts.LEAD_CHOICES.indexOf(slot.lead)
+        val current = if (listed >= 0) listed else EventAlerts.LEAD_CHOICES.size
+        AlertDialog.Builder(this)
+            .setTitle("Remind me")
+            .setSingleChoiceItems(labels.toTypedArray(), current) { dialog, which ->
+                dialog.dismiss()
+                if (which < EventAlerts.LEAD_CHOICES.size) {
+                    slot.lead = EventAlerts.LEAD_CHOICES[which]
+                    refreshSlot(slot)
+                } else {
+                    askCustomLead(slot)
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    /** A number and a unit of time, for example 3 days or 90 minutes before the event. */
+    private fun askCustomLead(slot: Slot) {
+        val units = arrayOf("Minutes", "Hours", "Days", "Weeks")
+        val sizes = intArrayOf(1, 60, 1440, 10080)
+        // Start from the current lead time in its biggest whole unit.
+        var unit = 2
+        var number = 1
+        if (slot.lead > 0) {
+            unit = sizes.indexOfLast { slot.lead % it == 0 }
+            number = slot.lead / sizes[unit]
+        }
+
+        val box = LinearLayout(this)
+        box.orientation = LinearLayout.VERTICAL
+        box.setPadding(dp(24), dp(8), dp(24), 0)
+        val input = EditText(this)
+        input.inputType = InputType.TYPE_CLASS_NUMBER
+        input.hint = "How many"
+        input.setText(number.toString())
+        input.setSelection(input.text.length)
+        box.addView(input)
+        val group = RadioGroup(this)
+        group.orientation = LinearLayout.VERTICAL
+        for (i in units.indices) {
+            val button = RadioButton(this)
+            button.id = View.generateViewId()
+            button.text = units[i]
+            button.isChecked = i == unit
+            group.addView(button)
+        }
+        box.addView(group)
+        // Scrolls on a small screen or with a large font, so the buttons of the dialog stay reachable.
+        val scroller = ScrollView(this)
+        scroller.addView(box)
+
+        AlertDialog.Builder(this)
+            .setTitle("Remind me before the event")
+            .setView(scroller)
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("Set") { _, _ ->
+                val count = input.text.toString().toIntOrNull() ?: 0
+                val chosen = group.indexOfChild(group.findViewById<View>(group.checkedRadioButtonId)).coerceAtLeast(0)
+                val total = count.toLong() * sizes[chosen]
+                when {
+                    total <= 0L -> slot.lead = 0
+                    total > EventItem.MAX_LEAD -> {
+                        slot.lead = EventItem.MAX_LEAD
+                        Toast.makeText(this, "The longest is 1 year before.", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> slot.lead = total.toInt()
+                }
+                refreshSlot(slot)
+            }
+            .show()
+    }
+
+    /** One list for the two kinds of alert; each opens the phone's own sound page for it. */
+    private fun chooseSound() {
+        AlertDialog.Builder(this)
+            .setTitle("Choose the alert sound")
+            .setItems(arrayOf("Notification sound", "Ringtone alert sound")) { _, which ->
+                EventAlerts.openSoundSettings(this, which == 1)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun refreshTimeButton() {
@@ -352,6 +460,10 @@ class EventsConfigActivity : Activity() {
         val strongest = slots.maxOfOrNull { it.alert } ?: EventAlerts.MODE_OFF
         val mode = if (strongest == EventAlerts.MODE_OFF) EventAlerts.MODE_NOTIFY else strongest
         EventAlerts.post(this, "Test alert", mode, "This is how an alert from your Event Countdown looks and sounds.")
+        val problem = EventAlerts.soundProblem(this, mode == EventAlerts.MODE_RINGTONE)
+        if (problem != null) {
+            Toast.makeText(this, problem + " Tap Choose the alert sound to fix it.", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun notificationsAllowed(): Boolean = EventAlerts.notificationsAllowed(this)
