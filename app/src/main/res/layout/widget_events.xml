@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Event countdown. Up to four rows: event name, its date (and time), and the time left.
-     Under a day to go, a Chronometer ticks the countdown live; otherwise the text view shows it. -->
+<!-- Event countdown. A heading row (the name of the widget and, with more events than rows, the page arrows)
+     and up to six event rows: name, date (and time), and the time left. Rows beyond the number the user chose
+     are hidden by code. Under a day to go, a Chronometer ticks the countdown live. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/w_root"
     android:layout_width="match_parent"
@@ -22,21 +23,62 @@
         android:paddingHorizontal="16dp"
         android:paddingVertical="8dp">
 
-        <!-- The name of the widget, for example "Mid exam dates". Hidden when it has no name. -->
-        <TextView
-            android:id="@+id/e_title"
+        <!-- Hidden unless the widget has a name or more than one page. -->
+        <LinearLayout
+            android:id="@+id/e_head"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:letterSpacing="0.08"
-            android:maxLines="1"
-            android:paddingBottom="2dp"
-            android:text=""
-            android:textAllCaps="true"
-            android:textColor="@color/accent"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:visibility="gone" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/e_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:letterSpacing="0.08"
+                android:maxLines="1"
+                android:paddingBottom="2dp"
+                android:text=""
+                android:textAllCaps="true"
+                android:textColor="@color/accent"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/e_prev"
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:contentDescription="Previous events"
+                android:gravity="center"
+                android:text="‹"
+                android:textColor="@color/accent"
+                android:textSize="22sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/e_page"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="1/2"
+                android:textColor="@color/muted"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/e_next"
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:contentDescription="Next events"
+                android:gravity="center"
+                android:text="›"
+                android:textColor="@color/accent"
+                android:textSize="22sp"
+                android:visibility="gone" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/e1_row"
@@ -92,7 +134,6 @@
                 android:textStyle="bold"
                 android:visibility="gone" />
         </LinearLayout>
-
         <LinearLayout
             android:id="@+id/e2_row"
             android:layout_width="match_parent"
@@ -147,7 +188,6 @@
                 android:textStyle="bold"
                 android:visibility="gone" />
         </LinearLayout>
-
         <LinearLayout
             android:id="@+id/e3_row"
             android:layout_width="match_parent"
@@ -202,7 +242,6 @@
                 android:textStyle="bold"
                 android:visibility="gone" />
         </LinearLayout>
-
         <LinearLayout
             android:id="@+id/e4_row"
             android:layout_width="match_parent"
@@ -248,6 +287,116 @@
 
             <Chronometer
                 android:id="@+id/e4_chrono"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:maxLines="1"
+                android:minWidth="64dp"
+                android:textColor="@color/accent"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/e5_row"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/e5_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text=""
+                android:textColor="@color/fg"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/e5_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:paddingEnd="10dp"
+                android:text=""
+                android:textColor="@color/muted"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/e5_days"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:maxLines="1"
+                android:minWidth="64dp"
+                android:text=""
+                android:textColor="@color/accent"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <Chronometer
+                android:id="@+id/e5_chrono"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:maxLines="1"
+                android:minWidth="64dp"
+                android:textColor="@color/accent"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/e6_row"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/e6_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text=""
+                android:textColor="@color/fg"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/e6_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:paddingEnd="10dp"
+                android:text=""
+                android:textColor="@color/muted"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/e6_days"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:maxLines="1"
+                android:minWidth="64dp"
+                android:text=""
+                android:textColor="@color/accent"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <Chronometer
+                android:id="@+id/e6_chrono"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="end"

@@ -22,7 +22,9 @@ data class EventsCfg(
     val events: List<EventItem> = emptyList(),
     val notifyMinutes: Int = 540,
     /** The name of the widget (for example "Mid exam dates"), shown above the events. Empty = no heading. */
-    val title: String = ""
+    val title: String = "",
+    /** How many events the widget shows at once (3 to 6). With more events than this, arrows flip the pages. */
+    val perPage: Int = 4
 )
 
 /** [offset] is the month being shown, counted from the current month (0 = this month). */
@@ -163,8 +165,16 @@ object ExtraStore {
             look = readLook(p, "events", id),
             events = if (raw.isNullOrEmpty()) emptyList() else parseEvents(raw),
             notifyMinutes = p.getInt("events_notify_$id", 540).coerceIn(0, 1439),
-            title = p.getString("events_title_$id", "") ?: ""
+            title = p.getString("events_title_$id", "") ?: "",
+            perPage = p.getInt("events_perpage_$id", 4).coerceIn(3, 6)
         )
+    }
+
+    /** The page of events a widget shows now (0 = the first). The widget's arrows change it. */
+    fun eventsPage(c: Context, id: Int): Int = prefs(c).getInt("events_page_$id", 0).coerceAtLeast(0)
+
+    fun setEventsPage(c: Context, id: Int, page: Int) {
+        prefs(c).edit().putInt("events_page_$id", page.coerceAtLeast(0)).apply()
     }
 
     /**
@@ -196,6 +206,9 @@ object ExtraStore {
         e.putString("events_list_$id", text)
         e.putInt("events_notify_$id", cfg.notifyMinutes)
         e.putString("events_title_$id", cfg.title.replace('\n', ' ').trim())
+        e.putInt("events_perpage_$id", cfg.perPage.coerceIn(3, 6))
+        // Saving always starts again on the first page.
+        e.remove("events_page_$id")
         e.putLong("events_cursor_$id", System.currentTimeMillis())
         e.remove("removed_$id")
         e.apply()

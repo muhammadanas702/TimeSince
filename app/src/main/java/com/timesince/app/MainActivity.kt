@@ -58,7 +58,7 @@ class MainActivity : Activity() {
         ) { id -> describeWorld(id) },
         WidgetKind(
             "Event Countdown",
-            "Up to four events with the days left. Birthdays can repeat, and an event can alert you.",
+            "As many events as you like, with the days left and arrows to flip pages. Name the widget; birthdays can repeat and an event can alert you.",
             EventsWidget::class.java, EventsConfigActivity::class.java
         ) { id -> describeEvents(id) },
         WidgetKind(

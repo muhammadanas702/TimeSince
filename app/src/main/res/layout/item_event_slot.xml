@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- One event in the Event countdown settings: name, date, "every year", clear, time and alert. -->
+<!-- One event in the Event countdown settings: name, date, "every year", remove, time and alert. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
             android:layout_height="46dp"
             android:layout_marginStart="8dp"
             android:background="@drawable/bg_button_outline"
-            android:contentDescription="Clear this event"
+            android:contentDescription="Remove this event"
             android:minWidth="0dp"
             android:padding="0dp"
             android:stateListAnimator="@null"
