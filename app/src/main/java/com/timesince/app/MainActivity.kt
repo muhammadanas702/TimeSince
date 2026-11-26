@@ -65,7 +65,17 @@ class MainActivity : Activity() {
             "Month Calendar",
             "A month at a glance with today circled and arrows for other months.",
             CalendarWidget::class.java, CalendarConfigActivity::class.java
-        ) { id -> describeCalendar(id) }
+        ) { id -> describeCalendar(id) },
+        WidgetKind(
+            "Day Progress",
+            "Soft bars for how far through today, the week, the month and the year you are.",
+            DayProgressWidget::class.java, DayProgressConfigActivity::class.java
+        ) { id -> describeProgress(id) },
+        WidgetKind(
+            "Sticky Note",
+            "A pastel note, or a checklist you tick right on the home screen.",
+            NoteWidget::class.java, NoteConfigActivity::class.java
+        ) { id -> describeNote(id) }
     )
 
     private lateinit var previewHost: FrameLayout
@@ -407,6 +417,16 @@ class MainActivity : Activity() {
                 next.item.name + ": " + EventMath.label(next)
         }
         return ListInfo(cfg.title.ifBlank { "Event Countdown" }, sub, cfg.look.accent)
+    }
+
+    private fun describeProgress(id: Int): ListInfo {
+        val cfg = ExtraStore.readProgress(this, id)
+        return ListInfo("Day Progress", DayProgressWidget.summary(cfg), cfg.look.accent)
+    }
+
+    private fun describeNote(id: Int): ListInfo {
+        val cfg = ExtraStore.readNote(this, id)
+        return ListInfo(cfg.title.ifBlank { "Sticky Note" }, NoteWidget.summary(cfg), cfg.look.accent)
     }
 
     private fun describeCalendar(id: Int): ListInfo {

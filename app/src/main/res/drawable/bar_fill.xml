@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The filled part of a Day Progress bar: the widget sets the level (0 to 10000) to show it from the left. -->
+<clip xmlns:android="http://schemas.android.com/apk/res/android"
+    android:clipOrientation="horizontal"
+    android:drawable="@drawable/bar_pill"
+    android:gravity="left" />

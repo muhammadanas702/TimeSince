@@ -30,8 +30,21 @@ object Themes {
         Preset("Sunset", 0xFF2B1020.toInt(), 0xFFFFEDE6.toInt(), 0xFFFF8A5B.toInt()),
         Preset("Rose", 0xFF3B0F24.toInt(), 0xFFFFE9EE.toInt(), 0xFFFF5C8A.toInt()),
         Preset("Violet", 0xFF1B1033.toInt(), 0xFFEFE9FF.toInt(), 0xFFA78BFA.toInt()),
-        Preset("Mint", 0xFFE8F6EF.toInt(), 0xFF0F2A1D.toInt(), 0xFF0E9F6E.toInt())
+        Preset("Mint", 0xFFE8F6EF.toInt(), 0xFF0F2A1D.toInt(), 0xFF0E9F6E.toInt()),
+        // Soft pastel presets (new ones go at the end, so the saved numbers of the older themes stay right).
+        Preset("Peach", 0xFFFFE8DC.toInt(), 0xFF4A2A22.toInt(), 0xFFFF7A59.toInt()),
+        Preset("Sakura", 0xFFFFE4EC.toInt(), 0xFF4A1D2E.toInt(), 0xFFF0527D.toInt()),
+        Preset("Lavender", 0xFFEDE7FF.toInt(), 0xFF2E2150.toInt(), 0xFF8B5CF6.toInt()),
+        Preset("Butter", 0xFFFFF4CC.toInt(), 0xFF3B3217.toInt(), 0xFFE0A100.toInt()),
+        Preset("Sky", 0xFFE3F2FF.toInt(), 0xFF10304D.toInt(), 0xFF2F8CFF.toInt())
     )
+
+    /** The [Look] of the preset with this name, for the default look of a new widget. */
+    fun look(name: String): Look {
+        val index = PRESETS.indexOfFirst { it.name == name }.coerceAtLeast(0)
+        val p = PRESETS[index]
+        return Look(theme = index, bg = p.bg, fg = p.fg, accent = p.accent, opacity = if (p.opacity >= 0) p.opacity else 100)
+    }
 
     /** Frosted glass with a yellow clock pill: the look of the World Clock sample. */
     val GLASS = Preset("Glass", 0xFFFFFFFF.toInt(), 0xFFFFFFFF.toInt(), 0xFFF5CA01.toInt(), 15)

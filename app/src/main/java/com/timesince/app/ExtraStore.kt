@@ -34,6 +34,41 @@ data class EventsCfg(
     val perPage: Int = 4
 )
 
+/** The Day Progress widget: which bars it shows (today, this week, month, year) and when the week starts. */
+data class ProgressCfg(
+    val look: Look = Themes.look("Lavender"),
+    val showDay: Boolean = true,
+    val showWeek: Boolean = true,
+    val showMonth: Boolean = true,
+    val showYear: Boolean = true,
+    val mondayFirst: Boolean = true
+)
+
+/**
+ * The Sticky Note widget: an optional [title] and the [text]. In [checklist] mode every line of the text is an
+ * item that can be ticked on the home screen; [done] holds one character per item, "1" for ticked.
+ * [size] is 0 (small), 1 (medium) or 2 (large).
+ */
+data class NoteCfg(
+    val look: Look = Themes.look("Butter"),
+    val title: String = "",
+    val text: String = "",
+    val checklist: Boolean = false,
+    val done: String = "",
+    val size: Int = 1
+) {
+    /** The checklist items: the non-empty lines, at most [MAX_ITEMS]. */
+    val items: List<String>
+        get() = text.lines().map { it.trim() }.filter { it.isNotEmpty() }.take(MAX_ITEMS)
+
+    fun isDone(index: Int): Boolean = done.getOrNull(index) == '1'
+
+    companion object {
+        const val MAX_ITEMS = 8
+        const val MAX_TEXT = 600
+    }
+}
+
 /** [offset] is the month being shown, counted from the current month (0 = this month). */
 data class CalendarCfg(
     val look: Look = Look(),
@@ -109,6 +144,66 @@ object ExtraStore {
         e.putBoolean("clock_sec_$id", cfg.seconds)
         e.remove("removed_$id")
         e.apply()
+    }
+
+    fun readProgress(c: Context, id: Int): ProgressCfg {
+        val p = prefs(c)
+        val base = ProgressCfg()
+        return ProgressCfg(
+            look = readLook(p, "prog", id, base.look),
+            showDay = p.getBoolean("prog_day_$id", true),
+            showWeek = p.getBoolean("prog_week_$id", true),
+            showMonth = p.getBoolean("prog_month_$id", true),
+            showYear = p.getBoolean("prog_year_$id", true),
+            mondayFirst = p.getBoolean("prog_monday_$id", true)
+        )
+    }
+
+    fun writeProgress(c: Context, id: Int, cfg: ProgressCfg) {
+        val e = prefs(c).edit()
+        writeLook(e, "prog", id, cfg.look)
+        e.putBoolean("prog_day_$id", cfg.showDay)
+        e.putBoolean("prog_week_$id", cfg.showWeek)
+        e.putBoolean("prog_month_$id", cfg.showMonth)
+        e.putBoolean("prog_year_$id", cfg.showYear)
+        e.putBoolean("prog_monday_$id", cfg.mondayFirst)
+        e.remove("removed_$id")
+        e.apply()
+    }
+
+    fun readNote(c: Context, id: Int): NoteCfg {
+        val p = prefs(c)
+        val base = NoteCfg()
+        return NoteCfg(
+            look = readLook(p, "note", id, base.look),
+            title = p.getString("note_title_$id", "") ?: "",
+            text = p.getString("note_text_$id", "") ?: "",
+            checklist = p.getBoolean("note_list_$id", false),
+            done = p.getString("note_done_$id", "") ?: "",
+            size = p.getInt("note_size_$id", 1).coerceIn(0, 2)
+        )
+    }
+
+    fun writeNote(c: Context, id: Int, cfg: NoteCfg) {
+        val e = prefs(c).edit()
+        writeLook(e, "note", id, cfg.look)
+        e.putString("note_title_$id", cfg.title.replace('\n', ' ').trim())
+        e.putString("note_text_$id", cfg.text.take(NoteCfg.MAX_TEXT))
+        e.putBoolean("note_list_$id", cfg.checklist)
+        e.putString("note_done_$id", cfg.done)
+        e.putInt("note_size_$id", cfg.size)
+        e.remove("removed_$id")
+        e.apply()
+    }
+
+    /** Ticks or unticks one item of a checklist note, from the widget on the home screen. */
+    fun toggleNoteDone(c: Context, id: Int, index: Int) {
+        val cfg = readNote(c, id)
+        val count = cfg.items.size
+        if (index !in 0 until count) return
+        val flags = CharArray(count) { if (cfg.isDone(it)) '1' else '0' }
+        flags[index] = if (flags[index] == '1') '0' else '1'
+        prefs(c).edit().putString("note_done_$id", String(flags)).apply()
     }
 
     fun readWorld(c: Context, id: Int): WorldCfg {
