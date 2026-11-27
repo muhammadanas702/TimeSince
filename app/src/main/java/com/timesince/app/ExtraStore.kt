@@ -69,6 +69,35 @@ data class NoteCfg(
     }
 }
 
+/** The Habit Streak widget: the name of the habit and the days (as epoch days) on which it was ticked. */
+data class HabitCfg(
+    val look: Look = Themes.look("Mint"),
+    val name: String = "",
+    val days: Set<Long> = emptySet()
+)
+
+/**
+ * The Quote of the Day widget. With [own] on and some lines in [text], the quotes are the lines the user wrote;
+ * otherwise the built-in ones. [shift] moves to the next quote when the user taps the refresh button.
+ * [size] is 0 (small), 1 (medium) or 2 (large).
+ */
+data class QuoteCfg(
+    val look: Look = Themes.look("Sakura"),
+    val own: Boolean = false,
+    val text: String = "",
+    val size: Int = 1,
+    val shift: Int = 0
+) {
+    /** The quotes the user wrote: the non-empty lines, at most [MAX_QUOTES]. */
+    val ownQuotes: List<String>
+        get() = text.lines().map { it.trim() }.filter { it.isNotEmpty() }.take(MAX_QUOTES)
+
+    companion object {
+        const val MAX_QUOTES = 60
+        const val MAX_TEXT = 3000
+    }
+}
+
 /** [offset] is the month being shown, counted from the current month (0 = this month). */
 data class CalendarCfg(
     val look: Look = Look(),
@@ -204,6 +233,63 @@ object ExtraStore {
         val flags = CharArray(count) { if (cfg.isDone(it)) '1' else '0' }
         flags[index] = if (flags[index] == '1') '0' else '1'
         prefs(c).edit().putString("note_done_$id", String(flags)).apply()
+    }
+
+    fun readHabit(c: Context, id: Int): HabitCfg {
+        val p = prefs(c)
+        val base = HabitCfg()
+        val raw = p.getString("habit_days_$id", "") ?: ""
+        return HabitCfg(
+            look = readLook(p, "habit", id, base.look),
+            name = p.getString("habit_name_$id", "") ?: "",
+            days = raw.split(",").mapNotNull { it.toLongOrNull() }.toSet()
+        )
+    }
+
+    fun writeHabit(c: Context, id: Int, cfg: HabitCfg) {
+        val e = prefs(c).edit()
+        writeLook(e, "habit", id, cfg.look)
+        e.putString("habit_name_$id", cfg.name.replace('\n', ' ').trim())
+        e.putString("habit_days_$id", HabitMath.save(cfg.days))
+        e.remove("removed_$id")
+        e.apply()
+    }
+
+    /** Ticks today of a habit, or takes the tick back, from the widget on the home screen. */
+    fun toggleHabitToday(c: Context, id: Int, today: Long) {
+        val days = readHabit(c, id).days.toMutableSet()
+        if (!days.remove(today)) days.add(today)
+        prefs(c).edit().putString("habit_days_$id", HabitMath.save(days)).apply()
+    }
+
+    fun readQuote(c: Context, id: Int): QuoteCfg {
+        val p = prefs(c)
+        val base = QuoteCfg()
+        return QuoteCfg(
+            look = readLook(p, "quote", id, base.look),
+            own = p.getBoolean("quote_own_$id", false),
+            text = p.getString("quote_text_$id", "") ?: "",
+            size = p.getInt("quote_size_$id", 1).coerceIn(0, 2),
+            shift = p.getInt("quote_shift_$id", 0)
+        )
+    }
+
+    /** Saving keeps the quote the user is looking at (the shift) as it is. */
+    fun writeQuote(c: Context, id: Int, cfg: QuoteCfg) {
+        val e = prefs(c).edit()
+        writeLook(e, "quote", id, cfg.look)
+        e.putBoolean("quote_own_$id", cfg.own)
+        e.putString("quote_text_$id", cfg.text.take(QuoteCfg.MAX_TEXT))
+        e.putInt("quote_size_$id", cfg.size)
+        e.putInt("quote_shift_$id", cfg.shift)
+        e.remove("removed_$id")
+        e.apply()
+    }
+
+    /** The refresh button of the widget: the next quote. */
+    fun nextQuote(c: Context, id: Int) {
+        val shift = readQuote(c, id).shift
+        prefs(c).edit().putInt("quote_shift_$id", (shift + 1) % 100_000).apply()
     }
 
     fun readWorld(c: Context, id: Int): WorldCfg {

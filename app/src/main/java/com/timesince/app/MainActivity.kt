@@ -75,7 +75,17 @@ class MainActivity : Activity() {
             "Sticky Note",
             "A pastel note, or a checklist you tick right on the home screen.",
             NoteWidget::class.java, NoteConfigActivity::class.java
-        ) { id -> describeNote(id) }
+        ) { id -> describeNote(id) },
+        WidgetKind(
+            "Habit Streak",
+            "One habit, one big circle to tick every day, your streak and the last seven days.",
+            HabitWidget::class.java, HabitConfigActivity::class.java
+        ) { id -> describeHabit(id) },
+        WidgetKind(
+            "Quote of the Day",
+            "A short, soft quote that is new every day. Built-in, or write your own.",
+            QuoteWidget::class.java, QuoteConfigActivity::class.java
+        ) { id -> describeQuote(id) }
     )
 
     private lateinit var previewHost: FrameLayout
@@ -427,6 +437,16 @@ class MainActivity : Activity() {
     private fun describeNote(id: Int): ListInfo {
         val cfg = ExtraStore.readNote(this, id)
         return ListInfo(cfg.title.ifBlank { "Sticky Note" }, NoteWidget.summary(cfg), cfg.look.accent)
+    }
+
+    private fun describeHabit(id: Int): ListInfo {
+        val cfg = ExtraStore.readHabit(this, id)
+        return ListInfo(cfg.name.ifBlank { "Habit Streak" }, HabitWidget.summary(cfg), cfg.look.accent)
+    }
+
+    private fun describeQuote(id: Int): ListInfo {
+        val cfg = ExtraStore.readQuote(this, id)
+        return ListInfo("Quote of the Day", QuoteWidget.summary(id, cfg), cfg.look.accent)
     }
 
     private fun describeCalendar(id: Int): ListInfo {

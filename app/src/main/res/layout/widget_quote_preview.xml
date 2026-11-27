@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- What the Quote of the Day widget looks like in the widget picker (a fixed sample in the default Sakura look). -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/preview_card_sakura">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingHorizontal="26dp"
+        android:paddingVertical="14dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="serif"
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.1"
+            android:text="“Small steps still move you forward.”"
+            android:textColor="#4A1D2E"
+            android:textSize="16sp"
+            android:textStyle="italic" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="4dp"
+        android:importantForAccessibility="no"
+        android:padding="8dp"
+        android:alpha="0.6"
+        android:src="@drawable/ic_refresh"
+        android:tint="#4A1D2E" />
+</FrameLayout>

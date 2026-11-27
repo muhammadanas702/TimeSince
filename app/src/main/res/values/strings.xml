@@ -34,4 +34,8 @@
     <string name="widget_description_progress">Soft bars that show how far through today, this week, this month and this year you are. Choose the bars, colors and transparency.</string>
     <string name="widget_label_note">Sticky Note</string>
     <string name="widget_description_note">A small pastel note for the home screen. Write a note, or make a checklist and tick the items right on the home screen.</string>
+    <string name="widget_label_habit">Habit Streak</string>
+    <string name="widget_description_habit">One habit, one big circle to tick every day, your streak and the last seven days.</string>
+    <string name="widget_label_quote">Quote of the Day</string>
+    <string name="widget_description_quote">A short, soft quote that is new every day. Use the built-in ones or write your own.</string>
 </resources>

@@ -26,8 +26,14 @@ The app adds five widgets to the launcher's widget list. The app's home screen h
 - **Month Calendar**: the month at a glance with today circled in the accent color. The arrows on the widget move to the previous or next month, tapping the month name jumps back to this month, and tapping anywhere else opens the settings. Choose whether the week starts on Monday or Sunday.
 - **Day Progress**: soft rounded bars that show how far through today, this week, this month and this year you are, with the percent on the right. Switch any bar off (at least one stays) and choose whether the week starts on Monday or Sunday. The bars redraw every 15 minutes with a quiet alarm that does not wake the phone.
 - **Sticky Note**: a small pastel note. Write a title and a note, or turn on **Checklist** (one item per line, up to 8): tap an item on the home screen to tick it (it fills, gets struck through and the heading counts `2/5`). Tap the heading or the empty part to edit. Three text sizes.
+- **Habit Streak**: one habit with a name (for example `Read 10 pages`). Tap the big circle on the widget once a day to tick it (tap again to take it back). It shows the streak (the days in a row; it stays alive until the day is over) and the last seven days as small circles with the weekday letter. A quiet alarm at midnight moves the days along. *Clear all ticks* in the settings starts again.
+- **Quote of the Day**: a short quote in a soft serif italic, new every day. The small refresh icon in the corner shows the next one at once. Use the 40 built-in quotes (written for this app) or switch to *My own* and write one quote per line (`Be kind. - Anas` shows the author under it). Three text sizes.
 
 The clock widgets use `TextClock`, which the launcher keeps ticking by itself, so they need no alarms or background work. The Event Countdown only changes at midnight, so it uses one alarm shortly after midnight (and also redraws on boot and when the date or time zone changes). Event alerts use one more alarm, set for the next alert (or the next change of the countdown text) of all your Event widgets; when it fires the app sends what is due, redraws the widgets and sets the alarm for the one after. On some phones (for example with aggressive battery managers) you must also allow the app to auto-start or run in the background, or Android may drop the alarm.
+
+## New in version 3.7
+
+- **Two more widgets: Habit Streak and Quote of the Day** (see the list above). Both have a live preview in their settings, the color themes (Habit Streak starts in Mint, Quote of the Day in Sakura), and show in the app's *Your widgets* list with Edit and Delete.
 
 ## New in version 3.6
 
@@ -145,6 +151,8 @@ app/src/main/java/com/timesince/app/
   CalendarWidget.kt, CalendarConfigActivity.kt        Month Calendar widget and its settings
   DayProgressWidget.kt, DayProgressConfigActivity.kt, ProgressMath.kt   Day Progress widget, its settings and its maths
   NoteWidget.kt, NoteConfigActivity.kt                Sticky Note widget (note or checklist) and its settings
+  HabitWidget.kt, HabitConfigActivity.kt, HabitMath.kt   Habit Streak widget, its settings and the streak maths
+  QuoteWidget.kt, QuoteConfigActivity.kt, QuoteBank.kt   Quote of the Day widget, its settings and the quotes
   CalendarMath.kt     the 6x7 month grid; CalendarIds.kt holds the generated view ids
   DailyTick.kt        the after-midnight alarm used by date-based widgets
   Updater.kt          asks GitHub for the newest release, downloads it into an install session
