@@ -98,6 +98,28 @@ data class QuoteCfg(
     }
 }
 
+/** The Attendance Tracker: the subjects with their counts, and the [target] percent the college asks for. */
+data class AttendanceCfg(
+    val look: Look = Themes.look("Peach"),
+    val target: Int = 75,
+    val subjects: List<Subject> = emptyList()
+) {
+    companion object {
+        const val MAX_SUBJECTS = 6
+        val TARGETS = intArrayOf(60, 65, 70, 75, 80, 85, 90)
+    }
+}
+
+/** The Class Timetable: the typed lines of each weekday, [days][0] is Monday and [days][6] is Sunday. */
+data class TimetableCfg(
+    val look: Look = Themes.look("Sky"),
+    val days: List<String> = List(7) { "" }
+) {
+    companion object {
+        const val MAX_TEXT = 800
+    }
+}
+
 /** [offset] is the month being shown, counted from the current month (0 = this month). */
 data class CalendarCfg(
     val look: Look = Look(),
@@ -290,6 +312,66 @@ object ExtraStore {
     fun nextQuote(c: Context, id: Int) {
         val shift = readQuote(c, id).shift
         prefs(c).edit().putInt("quote_shift_$id", (shift + 1) % 100_000).apply()
+    }
+
+    fun readAttendance(c: Context, id: Int): AttendanceCfg {
+        val p = prefs(c)
+        val base = AttendanceCfg()
+        val raw = p.getString("att_list_$id", "") ?: ""
+        val subjects = raw.split(";").mapNotNull {
+            val parts = it.split("|")
+            if (parts.size != 3 || parts[0].isBlank()) {
+                null
+            } else {
+                val total = (parts[2].toIntOrNull() ?: 0).coerceIn(0, 9999)
+                Subject(parts[0], (parts[1].toIntOrNull() ?: 0).coerceIn(0, total), total)
+            }
+        }
+        return AttendanceCfg(
+            look = readLook(p, "att", id, base.look),
+            target = p.getInt("att_target_$id", 75).coerceIn(50, 95),
+            subjects = subjects.take(AttendanceCfg.MAX_SUBJECTS)
+        )
+    }
+
+    private fun subjectsText(list: List<Subject>): String =
+        list.take(AttendanceCfg.MAX_SUBJECTS).joinToString(";") {
+            AttendanceMath.clean(it.name) + "|" + it.present + "|" + it.total
+        }
+
+    fun writeAttendance(c: Context, id: Int, cfg: AttendanceCfg) {
+        val e = prefs(c).edit()
+        writeLook(e, "att", id, cfg.look)
+        e.putString("att_list_$id", subjectsText(cfg.subjects))
+        e.putInt("att_target_$id", cfg.target)
+        e.remove("removed_$id")
+        e.apply()
+    }
+
+    /** One tap in the widget: a class was held, and the student was there (or not). */
+    fun markAttendance(c: Context, id: Int, index: Int, present: Boolean) {
+        val cfg = readAttendance(c, id)
+        val list = cfg.subjects.toMutableList()
+        if (index !in list.indices) return
+        val s = list[index]
+        list[index] = Subject(s.name, if (present) minOf(s.present + 1, 9999) else s.present, minOf(s.total + 1, 9999))
+        prefs(c).edit().putString("att_list_$id", subjectsText(list)).apply()
+    }
+
+    fun readTimetable(c: Context, id: Int): TimetableCfg {
+        val p = prefs(c)
+        return TimetableCfg(
+            look = readLook(p, "tt", id, TimetableCfg().look),
+            days = List(7) { p.getString("tt_d${it + 1}_$id", "") ?: "" }
+        )
+    }
+
+    fun writeTimetable(c: Context, id: Int, cfg: TimetableCfg) {
+        val e = prefs(c).edit()
+        writeLook(e, "tt", id, cfg.look)
+        for (i in 0 until 7) e.putString("tt_d${i + 1}_$id", cfg.days.getOrElse(i) { "" }.take(TimetableCfg.MAX_TEXT))
+        e.remove("removed_$id")
+        e.apply()
     }
 
     fun readWorld(c: Context, id: Int): WorldCfg {

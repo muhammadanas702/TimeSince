@@ -85,7 +85,17 @@ class MainActivity : Activity() {
             "Quote of the Day",
             "A short, soft quote that is new every day. Built-in, or write your own.",
             QuoteWidget::class.java, QuoteConfigActivity::class.java
-        ) { id -> describeQuote(id) }
+        ) { id -> describeQuote(id) },
+        WidgetKind(
+            "Attendance Tracker",
+            "Your attendance for every subject. Tap a tick or a cross for each class, and see how many you can still miss.",
+            AttendanceWidget::class.java, AttendanceConfigActivity::class.java
+        ) { id -> describeAttendance(id) },
+        WidgetKind(
+            "Class Timetable",
+            "Today's classes with their times. The class on now is highlighted, and tomorrow shows when today is over.",
+            TimetableWidget::class.java, TimetableConfigActivity::class.java
+        ) { id -> describeTimetable(id) }
     )
 
     private lateinit var previewHost: FrameLayout
@@ -447,6 +457,16 @@ class MainActivity : Activity() {
     private fun describeQuote(id: Int): ListInfo {
         val cfg = ExtraStore.readQuote(this, id)
         return ListInfo("Quote of the Day", QuoteWidget.summary(id, cfg), cfg.look.accent)
+    }
+
+    private fun describeAttendance(id: Int): ListInfo {
+        val cfg = ExtraStore.readAttendance(this, id)
+        return ListInfo("Attendance Tracker", AttendanceWidget.summary(cfg), cfg.look.accent)
+    }
+
+    private fun describeTimetable(id: Int): ListInfo {
+        val cfg = ExtraStore.readTimetable(this, id)
+        return ListInfo("Class Timetable", TimetableWidget.summary(cfg), cfg.look.accent)
     }
 
     private fun describeCalendar(id: Int): ListInfo {

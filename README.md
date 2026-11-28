@@ -28,8 +28,14 @@ The app adds five widgets to the launcher's widget list. The app's home screen h
 - **Sticky Note**: a small pastel note. Write a title and a note, or turn on **Checklist** (one item per line, up to 8): tap an item on the home screen to tick it (it fills, gets struck through and the heading counts `2/5`). Tap the heading or the empty part to edit. Three text sizes.
 - **Habit Streak**: one habit with a name (for example `Read 10 pages`). Tap the big circle on the widget once a day to tick it (tap again to take it back). It shows the streak (the days in a row; it stays alive until the day is over) and the last seven days as small circles with the weekday letter. A quiet alarm at midnight moves the days along. *Clear all ticks* in the settings starts again.
 - **Quote of the Day**: a short quote in a soft serif italic, new every day. The small refresh icon in the corner shows the next one at once. Use the 40 built-in quotes (written for this app) or switch to *My own* and write one quote per line (`Be kind. - Anas` shows the author under it). Three text sizes.
+- **Attendance Tracker**: for every subject (up to 6) the percent attended, with a tick button for a class you attended and a cross for one you missed. The hint under each name says how many classes you can still miss and stay at your goal (for example the 75% rule), or how many in a row you must attend to get back to it, and the percent turns red under the goal. In the settings write one subject per line and, to start from your real numbers, the counts after the name (`Database 12/14`). The goal can be 60 to 90%. The percent is rounded down, so 74.6% never shows as 75%.
+- **Class Timetable**: type the classes of each weekday, one per line, starting with the time (`9:00 AM - 10:30 AM Database (Room 12)`, `14:00-15:30 Networks lab`, `10 am Physics`; the end time is optional). The widget shows today's classes in time order, the class that is on now in the accent color with a dot, finished classes faded, and tomorrow's classes once today's are over. *Copy this day to Monday to Friday* saves typing. It redraws every 15 minutes with a quiet alarm that does not wake the phone.
 
 The clock widgets use `TextClock`, which the launcher keeps ticking by itself, so they need no alarms or background work. The Event Countdown only changes at midnight, so it uses one alarm shortly after midnight (and also redraws on boot and when the date or time zone changes). Event alerts use one more alarm, set for the next alert (or the next change of the countdown text) of all your Event widgets; when it fires the app sends what is due, redraws the widgets and sets the alarm for the one after. On some phones (for example with aggressive battery managers) you must also allow the app to auto-start or run in the background, or Android may drop the alarm.
+
+## New in version 3.8
+
+- **Two widgets for students: Attendance Tracker and Class Timetable** (see the list above). Both have a live preview in their settings (the timetable preview shows the day being edited), the color themes (Attendance starts in Peach, Timetable in Sky), and show in the app's *Your widgets* list with Edit and Delete.
 
 ## New in version 3.7
 
@@ -153,6 +159,8 @@ app/src/main/java/com/timesince/app/
   NoteWidget.kt, NoteConfigActivity.kt                Sticky Note widget (note or checklist) and its settings
   HabitWidget.kt, HabitConfigActivity.kt, HabitMath.kt   Habit Streak widget, its settings and the streak maths
   QuoteWidget.kt, QuoteConfigActivity.kt, QuoteBank.kt   Quote of the Day widget, its settings and the quotes
+  AttendanceWidget.kt, AttendanceConfigActivity.kt, AttendanceMath.kt   Attendance Tracker widget, its settings and the maths
+  TimetableWidget.kt, TimetableConfigActivity.kt, TimetableMath.kt   Class Timetable widget, its settings and the reading of the typed lines
   CalendarMath.kt     the 6x7 month grid; CalendarIds.kt holds the generated view ids
   DailyTick.kt        the after-midnight alarm used by date-based widgets
   Updater.kt          asks GitHub for the newest release, downloads it into an install session

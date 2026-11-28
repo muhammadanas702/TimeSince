@@ -38,4 +38,8 @@
     <string name="widget_description_habit">One habit, one big circle to tick every day, your streak and the last seven days.</string>
     <string name="widget_label_quote">Quote of the Day</string>
     <string name="widget_description_quote">A short, soft quote that is new every day. Use the built-in ones or write your own.</string>
+    <string name="widget_label_attendance">Attendance Tracker</string>
+    <string name="widget_description_attendance">Your attendance for every subject, with a tick and a cross to mark each class, and a hint for how many classes you can still miss.</string>
+    <string name="widget_label_timetable">Class Timetable</string>
+    <string name="widget_description_timetable">Today\'s classes with their times. The class that is on now is highlighted, and tomorrow shows when today is over.</string>
 </resources>

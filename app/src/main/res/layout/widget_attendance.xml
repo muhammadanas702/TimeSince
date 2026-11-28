@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Attendance Tracker: a heading with the goal, then up to six subjects. Each has the name with a hint
+     (how many classes can still be missed, or must be attended), the percent, a present and an absent button. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/w_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/w_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_shape"
+        android:tint="@color/surface" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="2dp">
+
+            <TextView
+                android:id="@+id/a_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:letterSpacing="0.08"
+                android:maxLines="1"
+                android:text="ATTENDANCE"
+                android:textColor="@color/accent"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/a_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="Goal 75%"
+                android:textColor="@color/muted"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/a1_row"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/a1_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text=""
+                    android:textColor="@color/fg"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/a1_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text=""
+                    android:textColor="@color/muted"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/a1_pct"
+                android:layout_width="46dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:maxLines="1"
+                android:text=""
+                android:textColor="@color/accent"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/a1_yes"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="6dp"
+                android:contentDescription="Present"
+                android:padding="3dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_check_on" />
+
+            <ImageView
+                android:id="@+id/a1_no"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:contentDescription="Absent"
+                android:padding="3dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_cross" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/a2_row"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/a2_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text=""
+                    android:textColor="@color/fg"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/a2_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text=""
+                    android:textColor="@color/muted"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/a2_pct"
+                android:layout_width="46dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:maxLines="1"
+                android:text=""
+                android:textColor="@color/accent"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/a2_yes"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="6dp"
+                android:contentDescription="Present"
+                android:padding="3dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_check_on" />
+
+            <ImageView
+                android:id="@+id/a2_no"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:contentDescription="Absent"
+                android:padding="3dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_cross" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/a3_row"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/a3_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text=""
+                    android:textColor="@color/fg"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/a3_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text=""
+                    android:textColor="@color/muted"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/a3_pct"
+                android:layout_width="46dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:maxLines="1"
+                android:text=""
+                android:textColor="@color/accent"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/a3_yes"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="6dp"
+                android:contentDescription="Present"
+                android:padding="3dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_check_on" />
+
+            <ImageView
+                android:id="@+id/a3_no"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:contentDescription="Absent"
+                android:padding="3dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_cross" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/a4_row"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/a4_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text=""
+                    android:textColor="@color/fg"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/a4_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text=""
+                    android:textColor="@color/muted"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/a4_pct"
+                android:layout_width="46dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:maxLines="1"
+                android:text=""
+                android:textColor="@color/accent"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/a4_yes"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="6dp"
+                android:contentDescription="Present"
+                android:padding="3dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_check_on" />
+
+            <ImageView
+                android:id="@+id/a4_no"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:contentDescription="Absent"
+                android:padding="3dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_cross" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/a5_row"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/a5_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text=""
+                    android:textColor="@color/fg"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/a5_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text=""
+                    android:textColor="@color/muted"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/a5_pct"
+                android:layout_width="46dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:maxLines="1"
+                android:text=""
+                android:textColor="@color/accent"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/a5_yes"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="6dp"
+                android:contentDescription="Present"
+                android:padding="3dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_check_on" />
+
+            <ImageView
+                android:id="@+id/a5_no"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:contentDescription="Absent"
+                android:padding="3dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_cross" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/a6_row"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/a6_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text=""
+                    android:textColor="@color/fg"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/a6_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text=""
+                    android:textColor="@color/muted"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/a6_pct"
+                android:layout_width="46dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:maxLines="1"
+                android:text=""
+                android:textColor="@color/accent"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/a6_yes"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="6dp"
+                android:contentDescription="Present"
+                android:padding="3dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_check_on" />
+
+            <ImageView
+                android:id="@+id/a6_no"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:contentDescription="Absent"
+                android:padding="3dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_cross" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
